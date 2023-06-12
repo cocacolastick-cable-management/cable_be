@@ -3,7 +3,7 @@ package services
 import (
 	"errors"
 	"github.com/cable_management/cable_be/app/domain/entities"
-	"github.com/cable_management/cable_be/share"
+	"github.com/cable_management/cable_be/share/env"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 	"time"
@@ -45,10 +45,10 @@ type IAuthTokenService interface {
 }
 
 type AuthTokenService struct {
-	env share.Env
+	env env.Env
 }
 
-func NewAuthTokenService(env share.Env) *AuthTokenService {
+func NewAuthTokenService(env env.Env) *AuthTokenService {
 	return &AuthTokenService{env: env}
 }
 

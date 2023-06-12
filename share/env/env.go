@@ -1,4 +1,4 @@
-package share
+package env
 
 type Env struct {
 	JwtSecret string

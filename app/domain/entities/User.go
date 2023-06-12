@@ -16,19 +16,22 @@ type User struct {
 	Email        string
 	Name         string
 	PasswordHash string
+	IsActive     bool
 }
 
 func NewUser(
-	role,
-	email,
-	name,
+	role string,
+	email string,
+	name string,
 	passwordHash string,
+	isActive bool,
 	createdAt time.Time) *User {
 
 	return &User{
-		NewEntityBase(createdAt),
-		role,
-		email,
-		name,
-		passwordHash}
+		EntityBase:   NewEntityBase(createdAt),
+		Role:         role,
+		Email:        email,
+		Name:         name,
+		PasswordHash: passwordHash,
+		IsActive:     isActive}
 }

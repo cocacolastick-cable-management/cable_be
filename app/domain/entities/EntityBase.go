@@ -1,9 +1,12 @@
 package entities
 
 import "time"
+import (
+	"github.com/google/uuid"
+)
 
 type EntityBase struct {
-	Id string
+	Id uuid.UUID
 
 	// CreatedAt means the time when the object is created in real life
 	CreatedAt time.Time

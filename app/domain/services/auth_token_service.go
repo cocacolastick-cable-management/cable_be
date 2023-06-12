@@ -34,10 +34,10 @@ type AuthToken struct {
 
 type AuthTokenClaims struct {
 	jwt.RegisteredClaims
-	Role        string
-	Type        string
-	UserId      uuid.UUID
-	Permissions []string
+	Role        string    `json:"role"`
+	Type        string    `json:"type"`
+	UserId      uuid.UUID `json:"user_id"`
+	Permissions []string  `json:"permissions,omitempty"`
 }
 
 type IAuthTokenService interface {

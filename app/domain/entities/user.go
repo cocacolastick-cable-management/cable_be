@@ -1,12 +1,24 @@
 package entities
 
-import "time"
+import (
+	"errors"
+	"time"
+)
 
 const (
 	RoleAdmin      = "admin"
 	RolePlanner    = "planner"
 	RoleSupplier   = "supplier"
 	RoleContractor = "contractor"
+)
+
+
+var (
+	ErrInvalidRole     = errors.New("invalid role")
+	ErrInvalidEmail    = errors.New("invalid email")
+	ErrInvalidPassword = errors.New("invalid password")
+
+	ErrDupEmail = errors.New("duplicated email")
 )
 
 type User struct {

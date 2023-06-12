@@ -12,6 +12,9 @@ const (
 	RoleContractor = "contractor"
 )
 
+var (
+	RoleList = []string{RoleAdmin, RolePlanner, RoleSupplier, RoleContractor}
+)
 
 var (
 	ErrInvalidRole     = errors.New("invalid role")

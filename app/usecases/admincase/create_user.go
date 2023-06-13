@@ -48,7 +48,7 @@ func NewCreateUser(
 
 func (c CreateUser) Handle(accessToken string, req *CreateUserReq) (err error) {
 
-	_, err = c.authorService.Authorize(accessToken, nil, nil)
+	_, err = c.authorService.Authorize(accessToken, []string{entities.RoleAdmin}, nil)
 	if err != nil {
 		return err
 	}
@@ -59,7 +59,6 @@ func (c CreateUser) Handle(accessToken string, req *CreateUserReq) (err error) {
 	}
 
 	password := c.passwordService.GeneratePassword(10)
-
 	newUser, err := c.userFac.CreateUser(req.Role, req.Email, req.Name, password)
 	if err != nil {
 		return err

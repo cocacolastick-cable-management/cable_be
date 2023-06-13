@@ -9,4 +9,5 @@ type IUserRepo interface {
 	FindByEmail(email string, withs []string) (user *entities.User, err error)
 	FindById(id uuid.UUID, withs []string) (user *entities.User, err error)
 	Insert(user *entities.User) error
+	Save(user *entities.User) error
 }

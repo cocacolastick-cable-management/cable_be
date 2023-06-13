@@ -38,3 +38,8 @@ func (u UserRepo) Insert(user *entities.User) error {
 	result := u.db.Create(user)
 	return result.Error
 }
+
+func (u UserRepo) Save(user *entities.User) error {
+	result := u.db.Save(user)
+	return result.Error
+}

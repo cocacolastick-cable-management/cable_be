@@ -7,3 +7,9 @@ type ResponseType struct {
 	Errors  any    `json:"errors,omitempty"`
 }
 
+var (
+	UnauthenticatedRes = ResponseType{
+		Code:    "UA",
+		Message: "authenticate failed",
+	}
+)

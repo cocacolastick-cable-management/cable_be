@@ -48,7 +48,11 @@ func NewSignIn(
 func (s SignIn) Handle(req *SignInRequest) (res *SignInResponse, err error) {
 
 	user, _ := s.userRepo.FindByEmail(req.Email, nil)
-	if user == nil || !s.passwordService.Compare(req.Password, user.PasswordHash) {
+	if user == nil {
+		return nil, ErrUnauthenticated
+	}
+
+	if !s.passwordService.Compare(req.Password, user.PasswordHash) {
 		return nil, ErrUnauthenticated
 	}
 

@@ -41,6 +41,8 @@ type AuthTokenClaims struct {
 
 type IAuthTokenService interface {
 	CreateAuthToken(user *entities.User, permissions []string) (authToken *AuthToken, err error)
+	IsAccessTokenValid(accessToken string) (bool, *AuthTokenClaims)
+	IsRefreshTokenValid(refreshToken string) (bool, *AuthTokenClaims)
 }
 
 type AuthTokenService struct {

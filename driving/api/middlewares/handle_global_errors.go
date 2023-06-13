@@ -2,7 +2,7 @@ package middlewares
 
 import (
 	"errors"
-	"github.com/cable_management/cable_be/app/usecases/commomcase"
+	"github.com/cable_management/cable_be/app/domain/services"
 	"github.com/cable_management/cable_be/driving/api/_share/constants"
 	"github.com/cable_management/cable_be/driving/api/_share/responses"
 	"github.com/gin-gonic/gin"
@@ -22,7 +22,7 @@ func HandleGlobalErrors(ctx *gin.Context) {
 		return
 	}
 
-	if errors.Is(err, commomcase.ErrUnauthenticated) {
+	if errors.Is(err, services.ErrUnauthenticated) {
 		ctx.JSON(401, responses.UnauthenticatedRes)
 		return
 	}

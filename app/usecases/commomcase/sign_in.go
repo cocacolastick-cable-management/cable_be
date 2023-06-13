@@ -1,15 +1,10 @@
 package commomcase
 
 import (
-	"errors"
 	"github.com/cable_management/cable_be/_share/errs"
 	"github.com/cable_management/cable_be/app/contracts/database/repos"
 	"github.com/cable_management/cable_be/app/domain/entities"
 	"github.com/cable_management/cable_be/app/domain/services"
-)
-
-var (
-	ErrUnauthenticated = errors.New("authenticate failed")
 )
 
 type SignInRequest struct {
@@ -49,11 +44,11 @@ func (s SignIn) Handle(req *SignInRequest) (res *SignInResponse, err error) {
 
 	user, _ := s.userRepo.FindByEmail(req.Email, nil)
 	if user == nil {
-		return nil, ErrUnauthenticated
+		return nil, services.ErrUnauthenticated
 	}
 
 	if !s.passwordService.Compare(req.Password, user.PasswordHash) {
-		return nil, ErrUnauthenticated
+		return nil, services.ErrUnauthenticated
 	}
 
 	authToken, err := s.tokenService.CreateAuthToken(user, nil)

@@ -34,6 +34,7 @@ var (
 	passwordService services.IPasswordService
 	userFac         services.IUserFactory
 	tokenService    services.IAuthTokenService
+	authorService   services.IAuthorizeService
 
 	// usecases
 	createUserCase admincase.ICreateUser
@@ -82,9 +83,10 @@ func BuildDomain() {
 	passwordService = services.NewPasswordHash(validation)
 	userFac = services.NewUserFactory(passwordService, userRepo, validation)
 	tokenService = services.NewAuthTokenService(environments.JwtSecret)
+	authorService = services.NewAuthorizeService(tokenService, userRepo)
 
 	// usecases
-	createUserCase = admincase.NewCreateUser(userRepo, userFac, validation)
+	createUserCase = admincase.NewCreateUser(userRepo, userFac, validation, authorService)
 	signInCase = commomcase.NewSignIn(userRepo, tokenService, passwordService)
 }
 

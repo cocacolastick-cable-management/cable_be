@@ -15,7 +15,7 @@ func NewUserRepo(db *gorm.DB) *UserRepo {
 
 func (u UserRepo) FindByEmail(email string, withs []string) (user *entities.User, err error) {
 
-	err = u.db.Find(user, "users.email = ?", email).Error
+	err = u.db.Find(&user, "users.email = ?", email).Error
 	if err != nil {
 		return nil, err
 	}

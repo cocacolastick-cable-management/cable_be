@@ -6,25 +6,22 @@ import (
 	"gorm.io/gorm"
 )
 
-var (
-	DB *gorm.DB
-)
-
-func Init(dsn string) {
+func Init(dsn string) (db *gorm.DB) {
 
 	var err error
 
-	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic(err)
 		return
 	}
 
-	DB = DB.Debug()
+	db = db.Debug()
 
-	err = DB.AutoMigrate(&entities.User{})
+	err = db.AutoMigrate(&entities.User{})
 	if err != nil {
 		panic(err)
-		return
 	}
+
+	return db
 }

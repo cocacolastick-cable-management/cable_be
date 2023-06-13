@@ -30,7 +30,7 @@ func (p PasswordHash) Hash(password string) (passwordHash string, err error) {
 		return "", entities.ErrInvalidPassword
 	}
 
-	salt, err := bcrypt.GenerateFromPassword([]byte(password), 10)
+	salt, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		return "", err
 	}

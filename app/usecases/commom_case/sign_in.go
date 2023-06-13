@@ -2,10 +2,10 @@ package commom_case
 
 import (
 	"errors"
+	"github.com/cable_management/cable_be/_share/errs"
 	"github.com/cable_management/cable_be/app/contracts/database/repos"
 	"github.com/cable_management/cable_be/app/domain/entities"
 	"github.com/cable_management/cable_be/app/domain/services"
-	"github.com/cable_management/cable_be/share/errs"
 )
 
 var (

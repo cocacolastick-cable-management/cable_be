@@ -2,8 +2,8 @@ package services
 
 import (
 	"errors"
+	"github.com/cable_management/cable_be/_share/env"
 	"github.com/cable_management/cable_be/app/domain/entities"
-	"github.com/cable_management/cable_be/share/env"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 	"time"

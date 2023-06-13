@@ -1,29 +1,32 @@
 package services
 
 import (
+	"crypto/rand"
 	"github.com/cable_management/cable_be/app/domain/entities"
 	"github.com/go-playground/validator/v10"
 	"golang.org/x/crypto/bcrypt"
+	"math/big"
 )
 
 const (
-	PasswordValidateTags = ""
+	PasswordValidateTags = "required"
 )
 
 type IPasswordService interface {
 	Hash(password string) (passwordHash string, err error)
 	Compare(password, hashPassword string) bool
+	GeneratePassword(length int) string
 }
 
-type PasswordHash struct {
+type PasswordService struct {
 	validator *validator.Validate
 }
 
-func NewPasswordHash(validator *validator.Validate) *PasswordHash {
-	return &PasswordHash{validator: validator}
+func NewPasswordHash(validator *validator.Validate) *PasswordService {
+	return &PasswordService{validator: validator}
 }
 
-func (p PasswordHash) Hash(password string) (passwordHash string, err error) {
+func (p PasswordService) Hash(password string) (passwordHash string, err error) {
 
 	err = p.validator.Var(password, PasswordValidateTags)
 	if err != nil {
@@ -39,8 +42,22 @@ func (p PasswordHash) Hash(password string) (passwordHash string, err error) {
 	return passwordHash, nil
 }
 
-func (p PasswordHash) Compare(password, hashPassword string) bool {
+func (p PasswordService) Compare(password, hashPassword string) bool {
 
 	err := bcrypt.CompareHashAndPassword([]byte(hashPassword), []byte(password))
 	return err == nil
+}
+
+func (p PasswordService) GeneratePassword(length int) string {
+
+	charset := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+
+	password := make([]byte, length)
+	charsetLength := big.NewInt(int64(len(charset)))
+	for i := 0; i < length; i++ {
+		randomIndex, _ := rand.Int(rand.Reader, charsetLength)
+		password[i] = charset[randomIndex.Int64()]
+	}
+
+	return string(password)
 }

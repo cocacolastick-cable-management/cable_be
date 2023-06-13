@@ -110,7 +110,7 @@ func BuildDomain() {
 	authorService = services.NewAuthorizeService(tokenService, userRepo)
 
 	// usecases
-	createUserCase = admincase.NewCreateUser(userRepo, userFac, validation, authorService)
+	createUserCase = admincase.NewCreateUser(userRepo, userFac, validation, authorService, emailDriven, passwordService)
 	signInCase = commomcase.NewSignIn(userRepo, tokenService, passwordService)
 }
 

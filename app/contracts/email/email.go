@@ -11,6 +11,7 @@ type EmailData struct {
 type IEmail interface {
 	//send(data *EmailData) error
 	SendEmailNewUser(emailDto EmailNewUserDto) error
+	SendEmailUpdateUserIsActive(emailDto EmailUpdateUserIsActiveDto) error
 }
 
 type EmailNewUserDto struct {
@@ -25,4 +26,9 @@ func ToEmailNewUserDto(user *entities.User, password string) EmailNewUserDto {
 		Email:    user.Email,
 		Password: password,
 	}
+}
+
+type EmailUpdateUserIsActiveDto struct {
+	NewStatus bool
+	Email     string
 }

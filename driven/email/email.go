@@ -51,3 +51,19 @@ func (e Email) SendEmailNewUser(emailDto email.EmailNewUserDto) error {
 
 	return err
 }
+
+func (e Email) SendEmailUpdateUserIsActive(emailDto email.EmailUpdateUserIsActiveDto) error {
+
+	status := "disable"
+	if emailDto.NewStatus {
+		status = "active"
+	}
+
+	err := e.send(&email.EmailData{
+		Receiver: emailDto.Email,
+		Subject:  fmt.Sprintf("your account is %v", status),
+		Body:     fmt.Sprintf("your account is %v", status),
+	})
+
+	return err
+}

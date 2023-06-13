@@ -48,27 +48,32 @@ func NewCreateUser(
 
 func (c CreateUser) Handle(accessToken string, req *CreateUserReq) (err error) {
 
+	// authorize
 	_, err = c.authorService.Authorize(accessToken, []string{entities.RoleAdmin}, nil)
 	if err != nil {
 		return err
 	}
 
+	// validate
 	err = c.validator.Struct(req)
 	if err != nil {
 		return err
 	}
 
+	// create user
 	password := c.passwordService.GeneratePassword(10)
 	newUser, err := c.userFac.CreateUser(req.Role, req.Email, req.Name, password)
 	if err != nil {
 		return err
 	}
 
+	// insert to database
 	err = c.userRepo.Insert(newUser)
 	if err != nil {
 		return err
 	}
 
+	// send email with account to user
 	go func() {
 		err := c.emailDriven.SendEmailNewUser(email.ToEmailNewUserDto(newUser, password))
 		if err != nil {

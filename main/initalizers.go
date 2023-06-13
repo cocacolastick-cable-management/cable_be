@@ -44,8 +44,9 @@ var (
 	authorService   services.IAuthorizeService
 
 	// usecases
-	createUserCase admincase.ICreateUser
-	signInCase     commomcase.ISignIn
+	createUserCase         admincase.ICreateUser
+	signInCase             commomcase.ISignIn
+	updateUserIsActiveCase admincase.IUpdateUserIsActive
 )
 
 // api
@@ -112,6 +113,7 @@ func BuildDomain() {
 	// usecases
 	createUserCase = admincase.NewCreateUser(userRepo, userFac, validation, authorService, emailDriven, passwordService)
 	signInCase = commomcase.NewSignIn(userRepo, tokenService, passwordService)
+	updateUserIsActiveCase = admincase.NewUpdateUserIsActive(userRepo, authorService, emailDriven)
 }
 
 func StartApi() {

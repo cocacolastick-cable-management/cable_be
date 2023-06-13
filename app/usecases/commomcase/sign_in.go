@@ -1,4 +1,4 @@
-package commom_case
+package commomcase
 
 import (
 	"errors"

@@ -3,11 +3,13 @@ package main
 import (
 	"github.com/cable_management/cable_be/_share/env"
 	"github.com/cable_management/cable_be/app/contracts/database/repos"
+	"github.com/cable_management/cable_be/app/contracts/email"
 	"github.com/cable_management/cable_be/app/domain/services"
 	"github.com/cable_management/cable_be/app/usecases/admincase"
 	"github.com/cable_management/cable_be/app/usecases/commomcase"
 	"github.com/cable_management/cable_be/driven/database"
 	imRepos "github.com/cable_management/cable_be/driven/database/repos"
+	imEmail "github.com/cable_management/cable_be/driven/email"
 	"github.com/cable_management/cable_be/driving/api/controllers/admincontr"
 	"github.com/cable_management/cable_be/driving/api/controllers/commoncontr"
 	"github.com/cable_management/cable_be/driving/api/routers"
@@ -27,6 +29,10 @@ var (
 var (
 	validation       *validator.Validate
 	vlCreateUserDepd *admincase.VlCreateUserDepd
+)
+
+var (
+	emailDriven email.IEmail
 )
 
 // domain
@@ -63,12 +69,27 @@ func BuildEnv() {
 	//ENV.DbDsn = os.Getenv("DB_DSN")
 
 	environments.JwtSecret = "123467890qwertuiopasdfghjkl"
+
 	environments.DbDsn = "host=localhost user=postgres password=postgrespw dbname=cable_db port=32768 sslmode=disable TimeZone=Asia/Shanghai"
+
+	environments.SmtpEmail = "vuphamlethanh@gmail.com"
+	environments.SmtpHost = "smtp.gmail.com"
+	environments.SmtpPort = "587"
+	environments.SmtpPassword = "fzjugwhesxnbpixp"
 }
 
 func StartDb() {
 	db = database.Init(environments.DbDsn)
 	userRepo = imRepos.NewUserRepo(db)
+}
+
+func StartEmail() {
+	emailDriven = imEmail.NewEmail(imEmail.EmailConfig{
+		MailHost: environments.SmtpEmail,
+		Host:     environments.SmtpHost,
+		Port:     environments.SmtpPort,
+		Password: environments.SmtpPassword,
+	})
 }
 
 func BuildValidator() {

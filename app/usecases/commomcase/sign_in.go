@@ -34,6 +34,17 @@ type SignIn struct {
 	passwordService services.IPasswordService
 }
 
+func NewSignIn(
+	userRepo repos.IUserRepo,
+	tokenService services.IAuthTokenService,
+	passwordService services.IPasswordService) *SignIn {
+
+	return &SignIn{
+		userRepo:        userRepo,
+		tokenService:    tokenService,
+		passwordService: passwordService}
+}
+
 func (s SignIn) Handle(req *SignInRequest) (res *SignInResponse, err error) {
 
 	user, _ := s.userRepo.FindByEmail(req.Email, nil)

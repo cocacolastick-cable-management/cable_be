@@ -6,6 +6,10 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+const (
+	PasswordValidateTags = ""
+)
+
 type IPasswordService interface {
 	Hash(password string) (passwordHash string, err error)
 	Compare(password, hashPassword string) bool
@@ -21,7 +25,7 @@ func NewPasswordHash(validator *validator.Validate) *PasswordHash {
 
 func (p PasswordHash) Hash(password string) (passwordHash string, err error) {
 
-	err = p.validator.Var(password, "")
+	err = p.validator.Var(password, PasswordValidateTags)
 	if err != nil {
 		return "", entities.ErrInvalidPassword
 	}

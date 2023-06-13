@@ -22,3 +22,8 @@ func (u UserRepo) FindByEmail(email string, withs []string) (user *entities.User
 
 	return user, nil
 }
+
+func (u UserRepo) Insert(user *entities.User) error {
+	result := u.db.Create(user)
+	return result.Error
+}

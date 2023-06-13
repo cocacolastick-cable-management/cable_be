@@ -6,4 +6,5 @@ import (
 
 type IUserRepo interface {
 	FindByEmail(email string, withs []string) (user *entities.User, err error)
+	Insert(user *entities.User) error
 }

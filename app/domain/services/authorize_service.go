@@ -3,6 +3,7 @@ package services
 import (
 	"errors"
 	"github.com/cable_management/cable_be/app/contracts/database/repos"
+	"github.com/cable_management/cable_be/app/usecases/_share/errs"
 	"github.com/elliotchance/pie/v2"
 )
 
@@ -38,6 +39,11 @@ func (a AuthorizeService) Authorize(accessToken string, targetRoles []string, ta
 	}
 
 	matchUser, _ := a.userRepo.FindById(claims.UserId, nil)
+
+	if matchUser == nil {
+		return nil, errs.ErrUserNotFound
+	}
+
 	if !matchUser.IsActive {
 		return nil, ErrUserIsDisable
 	}

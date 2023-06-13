@@ -44,8 +44,9 @@ var (
 	authorService   services.IAuthorizeService
 
 	// usecases
-	createUserCase admincase.ICreateUser
-	signInCase     commomcase.ISignIn
+	createUserCase         admincase.ICreateUser
+	signInCase             commomcase.ISignIn
+	updateUserIsActiveCase admincase.IUpdateUserIsActive
 )
 
 // api
@@ -110,15 +111,16 @@ func BuildDomain() {
 	authorService = services.NewAuthorizeService(tokenService, userRepo)
 
 	// usecases
-	createUserCase = admincase.NewCreateUser(userRepo, userFac, validation, authorService)
+	createUserCase = admincase.NewCreateUser(userRepo, userFac, validation, authorService, emailDriven, passwordService)
 	signInCase = commomcase.NewSignIn(userRepo, tokenService, passwordService)
+	updateUserIsActiveCase = admincase.NewUpdateUserIsActive(userRepo, authorService, emailDriven)
 }
 
 func StartApi() {
 
 	// controllers
 	authContr = commoncontr.NewAuthController(signInCase)
-	adminUserContr = admincontr.NewUserController(createUserCase)
+	adminUserContr = admincontr.NewUserController(createUserCase, updateUserIsActiveCase)
 
 	// routers
 	commonRouters = routers.NewCommonRouters(authContr)

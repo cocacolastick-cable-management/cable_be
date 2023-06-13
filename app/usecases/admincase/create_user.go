@@ -1,7 +1,9 @@
 package admincase
 
 import (
+	"fmt"
 	"github.com/cable_management/cable_be/app/contracts/database/repos"
+	"github.com/cable_management/cable_be/app/contracts/email"
 	"github.com/cable_management/cable_be/app/domain/entities"
 	"github.com/cable_management/cable_be/app/domain/services"
 	"github.com/elliotchance/pie/v2"
@@ -19,44 +21,66 @@ type ICreateUser interface {
 }
 
 type CreateUser struct {
-	userRepo      repos.IUserRepo
-	userFac       services.IUserFactory
-	validator     *validator.Validate
-	authorService services.IAuthorizeService
+	userRepo        repos.IUserRepo
+	userFac         services.IUserFactory
+	validator       *validator.Validate
+	authorService   services.IAuthorizeService
+	emailDriven     email.IEmail
+	passwordService services.IPasswordService
 }
 
 func NewCreateUser(
 	userRepo repos.IUserRepo,
 	userFac services.IUserFactory,
 	validator *validator.Validate,
-	authorService services.IAuthorizeService) *CreateUser {
+	authorService services.IAuthorizeService,
+	emailDriven email.IEmail,
+	passwordService services.IPasswordService) *CreateUser {
 
 	return &CreateUser{
-		userRepo:      userRepo,
-		userFac:       userFac,
-		validator:     validator,
-		authorService: authorService}
+		userRepo:        userRepo,
+		userFac:         userFac,
+		validator:       validator,
+		authorService:   authorService,
+		emailDriven:     emailDriven,
+		passwordService: passwordService}
 }
 
 func (c CreateUser) Handle(accessToken string, req *CreateUserReq) (err error) {
 
-	_, err = c.authorService.Authorize(accessToken, nil, nil)
+	// authorize
+	_, err = c.authorService.Authorize(accessToken, []string{entities.RoleAdmin}, nil)
 	if err != nil {
 		return err
 	}
 
+	// validate
 	err = c.validator.Struct(req)
 	if err != nil {
 		return err
 	}
 
-	newUser, err := c.userFac.CreateUser(req.Role, req.Email, req.Name, "")
+	// create user
+	password := c.passwordService.GeneratePassword(10)
+	newUser, err := c.userFac.CreateUser(req.Role, req.Email, req.Name, password)
 	if err != nil {
 		return err
 	}
 
+	// insert to database
 	err = c.userRepo.Insert(newUser)
-	// TODO send email with email and password to user
+	if err != nil {
+		return err
+	}
+
+	// send email with account to user
+	go func() {
+		err := c.emailDriven.SendEmailNewUser(email.ToEmailNewUserDto(newUser, password))
+		if err != nil {
+			// TODO logger error
+			fmt.Println(err)
+		}
+	}()
 	// TODO sse?
 
 	return nil

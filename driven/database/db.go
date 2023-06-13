@@ -18,6 +18,8 @@ func Init(dsn string) (db *gorm.DB) {
 
 	db = db.Debug()
 
+	db.Raw("CREATE EXTENSION IF NOT EXISTS 'uuid-ossp'", nil)
+
 	err = db.AutoMigrate(&entities.User{})
 	if err != nil {
 		panic(err)

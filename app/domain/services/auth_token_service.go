@@ -2,7 +2,6 @@ package services
 
 import (
 	"errors"
-	"github.com/cable_management/cable_be/_share/env"
 	"github.com/cable_management/cable_be/app/domain/entities"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
@@ -45,11 +44,11 @@ type IAuthTokenService interface {
 }
 
 type AuthTokenService struct {
-	env env.Env
+	jwtSecret string
 }
 
-func NewAuthTokenService(env env.Env) *AuthTokenService {
-	return &AuthTokenService{env: env}
+func NewAuthTokenService(jwtSecret string) *AuthTokenService {
+	return &AuthTokenService{jwtSecret: jwtSecret}
 }
 
 func (a AuthTokenService) CreateAuthToken(user *entities.User, permissions []string) (authToken *AuthToken, err error) {
@@ -77,8 +76,8 @@ func (a AuthTokenService) CreateAuthToken(user *entities.User, permissions []str
 			},
 		})
 
-	accessTokenStr, _ := accessToken.SignedString([]byte(a.env.JwtSecret))
-	refreshTokenStr, _ := refreshToken.SignedString([]byte(a.env.JwtSecret))
+	accessTokenStr, _ := accessToken.SignedString([]byte(a.jwtSecret))
+	refreshTokenStr, _ := refreshToken.SignedString([]byte(a.jwtSecret))
 
 	return &AuthToken{
 		AccessToken:  accessTokenStr,
@@ -121,7 +120,7 @@ func (a AuthTokenService) ParseToClaims(tokenStr string) (*AuthTokenClaims, erro
 	claims := &AuthTokenClaims{}
 
 	token, err := jwt.ParseWithClaims(tokenStr, claims, func(token *jwt.Token) (interface{}, error) {
-		return []byte(a.env.JwtSecret), nil
+		return []byte(a.jwtSecret), nil
 	})
 
 	if err != nil || !token.Valid {

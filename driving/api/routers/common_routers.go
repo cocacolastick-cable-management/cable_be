@@ -19,6 +19,6 @@ func (a CommonRouters) Register(router gin.IRouter) {
 
 	router.POST("/sign-in",
 		middlewares.ParseBody[commomcase.SignInRequest],
-		a.authContr.SignIn)
-
+		a.authContr.SignIn,
+		middlewares.HandleGlobalErrors)
 }

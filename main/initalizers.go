@@ -9,7 +9,6 @@ import (
 	"github.com/cable_management/cable_be/driven/database"
 	imRepos "github.com/cable_management/cable_be/driven/database/repos"
 	"github.com/cable_management/cable_be/driving/api/controllers/commoncontr"
-	"github.com/cable_management/cable_be/driving/api/middlewares"
 	"github.com/cable_management/cable_be/driving/api/routers"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -98,13 +97,13 @@ func StartApi() {
 	commonRouters = routers.NewCommonRouters(authContr)
 
 	// init
-	ctx := gin.Default()
+	engine := gin.Default()
 
-	commonRouters.Register(ctx)
+	commonRouters.Register(engine)
 
-	ctx.Use(middlewares.HandleGlobalErrors)
+	//engine.NoRoute(middlewares.HandleGlobalErrors)
 
-	err := ctx.Run()
+	err := engine.Run()
 	if err != nil {
 		log.Fatal(err)
 		return

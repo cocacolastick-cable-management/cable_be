@@ -16,7 +16,7 @@ var (
 )
 
 type UpdateUserIsActiveReq struct {
-	IsActive bool `json:"isActive" binding:"required"`
+	IsActive *bool `json:"isActive" binding:"required"`
 }
 
 type IUpdateUserIsActive interface {
@@ -48,13 +48,13 @@ func (u UpdateUserIsActive) Handle(accessToken string, userId uuid.UUID, req *Up
 	}
 
 	// update user
-	if user.IsActive == req.IsActive == true {
+	if (user.IsActive == *req.IsActive) && (user.IsActive == true) {
 		return ErrUserAlreadyActive
 	}
-	if user.IsActive == req.IsActive == false {
+	if (user.IsActive == *req.IsActive) && (user.IsActive == false) {
 		return ErrUserAlreadyDisable
 	}
-	user.IsActive = req.IsActive
+	user.IsActive = *req.IsActive
 
 	// save to database
 	err = u.userRepo.Save(user)

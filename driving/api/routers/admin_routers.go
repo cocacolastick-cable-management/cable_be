@@ -25,4 +25,9 @@ func (a AdminRouters) Register(router gin.IRouter) {
 		a.userContr.CreateUser,
 		middlewares.HandleGlobalErrors)
 
+	adminRouter.PATCH("/users/:id",
+		middlewares.ParseAccessToken,
+		middlewares.ParseBody[admincase.UpdateUserIsActiveReq],
+		a.userContr.UpdateUserIsActive,
+		middlewares.HandleGlobalErrors)
 }

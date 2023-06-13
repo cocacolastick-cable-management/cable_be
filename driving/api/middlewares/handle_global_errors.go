@@ -3,6 +3,7 @@ package middlewares
 import (
 	"errors"
 	"github.com/cable_management/cable_be/app/domain/services"
+	"github.com/cable_management/cable_be/app/usecases/_share/errs"
 	"github.com/cable_management/cable_be/driving/api/_share/constants"
 	"github.com/cable_management/cable_be/driving/api/_share/types"
 	"github.com/gin-gonic/gin"
@@ -43,6 +44,11 @@ func HandleGlobalErrors(ctx *gin.Context) {
 		return
 	}
 
+	if errors.Is(err, errs.ErrUserNotFound) {
+		ctx.JSON(404, UserNotFound)
+		return
+	}
+
 	panic(err)
 }
 
@@ -60,6 +66,11 @@ var (
 	DisableAccount = types.ResponseType{
 		Code:    "DA",
 		Message: "account is disable",
+	}
+
+	UserNotFound = types.ResponseType{
+		Code:    "NF",
+		Message: "user is not found",
 	}
 )
 

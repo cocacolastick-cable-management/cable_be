@@ -120,7 +120,7 @@ func StartApi() {
 
 	// controllers
 	authContr = commoncontr.NewAuthController(signInCase)
-	adminUserContr = admincontr.NewUserController(createUserCase)
+	adminUserContr = admincontr.NewUserController(createUserCase, updateUserIsActiveCase)
 
 	// routers
 	commonRouters = routers.NewCommonRouters(authContr)

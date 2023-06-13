@@ -3,7 +3,7 @@ package commoncontr
 import (
 	"github.com/cable_management/cable_be/app/usecases/commomcase"
 	"github.com/cable_management/cable_be/driving/api/_share/constants"
-	"github.com/cable_management/cable_be/driving/api/_share/responses"
+	"github.com/cable_management/cable_be/driving/api/_share/types"
 	"github.com/cable_management/cable_be/driving/api/middlewares"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -32,7 +32,7 @@ func (a AuthController) SignIn(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, responses.ResponseType{
+	ctx.JSON(http.StatusOK, types.ResponseType{
 		Code:    "OK",
 		Message: "sign in successfully",
 		Payload: res,

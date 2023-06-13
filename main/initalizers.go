@@ -8,6 +8,7 @@ import (
 	"github.com/cable_management/cable_be/app/usecases/commomcase"
 	"github.com/cable_management/cable_be/driven/database"
 	imRepos "github.com/cable_management/cable_be/driven/database/repos"
+	"github.com/cable_management/cable_be/driving/api/controllers/admincontr"
 	"github.com/cable_management/cable_be/driving/api/controllers/commoncontr"
 	"github.com/cable_management/cable_be/driving/api/routers"
 	"github.com/gin-gonic/gin"
@@ -44,10 +45,12 @@ var (
 // api
 var (
 	// controllers
-	authContr commoncontr.IAuthController
+	authContr      commoncontr.IAuthController
+	adminUserContr admincontr.IUserController
 
 	// routers
-	commonRouters *routers.CommonRouters
+	commonRouters routers.IRouterBase
+	adminRouters  routers.IRouterBase
 )
 
 func BuildEnv() {
@@ -74,7 +77,7 @@ func BuildValidator() {
 
 	vlCreateUserDepd = admincase.NewVlCreateUserDepd(userRepo)
 
-	validation.RegisterStructValidation(vlCreateUserDepd.Handle, &admincase.CreateUserReq{})
+	validation.RegisterStructValidation(vlCreateUserDepd.Handle, admincase.CreateUserReq{})
 }
 
 func BuildDomain() {
@@ -94,14 +97,17 @@ func StartApi() {
 
 	// controllers
 	authContr = commoncontr.NewAuthController(signInCase)
+	adminUserContr = admincontr.NewUserController(createUserCase)
 
 	// routers
 	commonRouters = routers.NewCommonRouters(authContr)
+	adminRouters = routers.NewAdminRouters(adminUserContr)
 
 	// init
 	engine := gin.Default()
 
 	commonRouters.Register(engine)
+	adminRouters.Register(engine)
 
 	//engine.NoRoute(middlewares.HandleGlobalErrors)
 

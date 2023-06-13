@@ -28,7 +28,7 @@ type User struct {
 	EntityBase
 
 	Role         string `gorm:"type:varchar"`
-	Email        string `gorm:"type:varchar"`
+	Email        string `gorm:"type:varchar,unique"`
 	Name         string `gorm:"type:varchar"`
 	PasswordHash string `gorm:"type:varchar"`
 	IsActive     bool

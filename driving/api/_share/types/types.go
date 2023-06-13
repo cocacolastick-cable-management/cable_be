@@ -1,4 +1,4 @@
-package responses
+package types
 
 type ResponseType struct {
 	Code    string `json:"code"`
@@ -6,10 +6,3 @@ type ResponseType struct {
 	Payload any    `json:"payload,omitempty"`
 	Errors  any    `json:"errors,omitempty"`
 }
-
-var (
-	UnauthenticatedRes = ResponseType{
-		Code:    "UA",
-		Message: "authenticate failed",
-	}
-)

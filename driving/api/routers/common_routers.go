@@ -17,7 +17,9 @@ func NewCommonRouters(authContr commoncontr.IAuthController) *CommonRouters {
 
 func (a CommonRouters) Register(router gin.IRouter) {
 
-	router.POST("/sign-in",
+	commonRouter := router.Group("/common")
+
+	commonRouter.POST("/sign-in",
 		middlewares.ParseBody[commomcase.SignInRequest],
 		a.authContr.SignIn,
 		middlewares.HandleGlobalErrors)

@@ -41,7 +41,7 @@ func (u UserFactory) CreateUser(role, email, name, password string) (user *entit
 		return nil, entities.ErrDupEmail
 	}
 
-	if pie.Contains(entities.RoleList, role) {
+	if !pie.Contains(entities.RoleList, role) {
 		return nil, entities.ErrInvalidRole
 	}
 

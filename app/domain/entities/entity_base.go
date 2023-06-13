@@ -6,7 +6,7 @@ import (
 )
 
 type EntityBase struct {
-	Id uuid.UUID
+	Id uuid.UUID `gorm:"type:uuid"`
 
 	// CreatedAt means the time when the object is created in real life
 	CreatedAt time.Time

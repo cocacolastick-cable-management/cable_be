@@ -27,10 +27,10 @@ var (
 type User struct {
 	EntityBase
 
-	Role         string
-	Email        string
-	Name         string
-	PasswordHash string
+	Role         string `gorm:"type:varchar"`
+	Email        string `gorm:"type:varchar"`
+	Name         string `gorm:"type:varchar"`
+	PasswordHash string `gorm:"type:varchar"`
 	IsActive     bool
 }
 

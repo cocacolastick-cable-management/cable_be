@@ -48,6 +48,7 @@ var (
 	userFac         services.IUserFactory
 	tokenService    services.IAuthTokenService
 	authorService   services.IAuthorizeService
+	requestFac      services.IRequestFactory
 
 	// usecases
 	createUserCase         admincase.ICreateUser
@@ -117,6 +118,7 @@ func BuildDomain() {
 	userFac = services.NewUserFactory(passwordService, userRepo, validation)
 	tokenService = services.NewAuthTokenService(environments.JwtSecret)
 	authorService = services.NewAuthorizeService(tokenService, userRepo)
+	requestFac = services.NewRequestFactory(contractRepo, userRepo)
 
 	// usecases
 	createUserCase = admincase.NewCreateUser(userRepo, userFac, validation, authorService, emailDriven, passwordService)

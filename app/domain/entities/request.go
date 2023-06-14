@@ -14,6 +14,7 @@ type Request struct {
 	ContractId   uuid.UUID
 	ContractorId uuid.UUID
 
-	Contract   *Contract `gorm:"foreignKey:ContractId"`
-	Contractor *User     `gorm:"foreignKey:ContractorId"`
+	Contract   *Contract         `gorm:"foreignKey:ContractId"`
+	Contractor *User             `gorm:"foreignKey:ContractorId"`
+	Histories  []*RequestHistory `gorm:"foreignKey:RequestId"`
 }

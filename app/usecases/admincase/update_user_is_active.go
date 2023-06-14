@@ -1,26 +1,17 @@
 package admincase
 
 import (
-	"errors"
-	"github.com/cable_management/cable_be/app/contracts/database/repos"
-	"github.com/cable_management/cable_be/app/contracts/email"
-	"github.com/cable_management/cable_be/app/domain/entities"
+	"github.com/cable_management/cable_be/app/contracts/driven/database/repos"
+	"github.com/cable_management/cable_be/app/contracts/driven/email"
+	"github.com/cable_management/cable_be/app/contracts/driving/api/dtos"
+	"github.com/cable_management/cable_be/app/domain/constants"
+	"github.com/cable_management/cable_be/app/domain/errs"
 	"github.com/cable_management/cable_be/app/domain/services"
-	"github.com/cable_management/cable_be/app/usecases/_share/errs"
 	"github.com/google/uuid"
 )
 
-var (
-	ErrUserAlreadyDisable = errors.New("user is already disable")
-	ErrUserAlreadyActive  = errors.New("user is already active")
-)
-
-type UpdateUserIsActiveReq struct {
-	IsActive *bool `json:"isActive" binding:"required"`
-}
-
 type IUpdateUserIsActive interface {
-	Handle(accessToken string, userId uuid.UUID, req *UpdateUserIsActiveReq) error
+	Handle(accessToken string, userId uuid.UUID, req *dtos.UpdateUserIsActiveReq) error
 }
 
 type UpdateUserIsActive struct {
@@ -33,10 +24,10 @@ func NewUpdateUserIsActive(userRepo repos.IUserRepo, authorService services.IAut
 	return &UpdateUserIsActive{userRepo: userRepo, authorService: authorService, emailDriven: emailDriven}
 }
 
-func (u UpdateUserIsActive) Handle(accessToken string, userId uuid.UUID, req *UpdateUserIsActiveReq) error {
+func (u UpdateUserIsActive) Handle(accessToken string, userId uuid.UUID, req *dtos.UpdateUserIsActiveReq) error {
 
 	// authorized
-	_, err := u.authorService.Authorize(accessToken, []string{entities.RoleAdmin}, nil)
+	_, err := u.authorService.Authorize(accessToken, []string{constants.RoleAdmin}, nil)
 	if err != nil {
 		return err
 	}
@@ -49,10 +40,10 @@ func (u UpdateUserIsActive) Handle(accessToken string, userId uuid.UUID, req *Up
 
 	// update user
 	if (user.IsActive == *req.IsActive) && (user.IsActive == true) {
-		return ErrUserAlreadyActive
+		return errs.ErrUserAlreadyActive
 	}
 	if (user.IsActive == *req.IsActive) && (user.IsActive == false) {
-		return ErrUserAlreadyDisable
+		return errs.ErrUserAlreadyDisable
 	}
 	user.IsActive = *req.IsActive
 
@@ -64,7 +55,7 @@ func (u UpdateUserIsActive) Handle(accessToken string, userId uuid.UUID, req *Up
 
 	// send email notif to current user
 	go func() {
-		err := u.emailDriven.SendEmailUpdateUserIsActive(email.EmailUpdateUserIsActiveDto{
+		err := u.emailDriven.SendEmailUpdateUserIsActive(email.MailUpdateUserIsActiveDto{
 			NewStatus: user.IsActive,
 			Email:     user.Email,
 		})

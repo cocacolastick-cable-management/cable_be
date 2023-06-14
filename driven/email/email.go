@@ -2,12 +2,12 @@ package email
 
 import (
 	"fmt"
-	"github.com/cable_management/cable_be/app/contracts/email"
+	"github.com/cable_management/cable_be/app/contracts/driven/email"
 	"log"
 	"net/smtp"
 )
 
-type EmailConfig struct {
+type Config struct {
 	MailHost string
 	Host     string
 	Port     string
@@ -15,17 +15,17 @@ type EmailConfig struct {
 }
 
 type Email struct {
-	config EmailConfig
+	config Config
 	auth   smtp.Auth
 }
 
-func NewEmail(config EmailConfig) *Email {
+func NewEmail(config Config) *Email {
 	return &Email{
 		config: config,
 		auth:   smtp.PlainAuth("", config.MailHost, config.Password, config.Host)}
 }
 
-func (e Email) send(data *email.EmailData) error {
+func (e Email) send(data *email.MailData) error {
 
 	mail := "From: " + e.config.MailHost + "\n" +
 		"To: " + data.Receiver + "\n" +
@@ -41,9 +41,9 @@ func (e Email) send(data *email.EmailData) error {
 	return err
 }
 
-func (e Email) SendEmailNewUser(emailDto email.EmailNewUserDto) error {
+func (e Email) SendEmailNewUser(emailDto email.MailNewUserDto) error {
 
-	err := e.send(&email.EmailData{
+	err := e.send(&email.MailData{
 		Receiver: emailDto.Email,
 		Subject:  "Your Account",
 		Body:     fmt.Sprintf("\n name: %v \n email: %v \n password: %v\n", emailDto.Name, emailDto.Email, emailDto.Password),
@@ -52,14 +52,14 @@ func (e Email) SendEmailNewUser(emailDto email.EmailNewUserDto) error {
 	return err
 }
 
-func (e Email) SendEmailUpdateUserIsActive(emailDto email.EmailUpdateUserIsActiveDto) error {
+func (e Email) SendEmailUpdateUserIsActive(emailDto email.MailUpdateUserIsActiveDto) error {
 
 	status := "disable"
 	if emailDto.NewStatus {
 		status = "active"
 	}
 
-	err := e.send(&email.EmailData{
+	err := e.send(&email.MailData{
 		Receiver: emailDto.Email,
 		Subject:  fmt.Sprintf("your account is %v", status),
 		Body:     fmt.Sprintf("your account is %v", status),

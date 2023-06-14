@@ -2,7 +2,8 @@ package admincontr
 
 import (
 	"errors"
-	"github.com/cable_management/cable_be/app/usecases/_share/errs"
+	"github.com/cable_management/cable_be/app/contracts/driving/api/dtos"
+	"github.com/cable_management/cable_be/app/domain/errs"
 	"github.com/cable_management/cable_be/app/usecases/admincase"
 	"github.com/cable_management/cable_be/driving/api/_share/constants"
 	"github.com/cable_management/cable_be/driving/api/_share/types"
@@ -10,11 +11,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
-
-type IUserController interface {
-	CreateUser(ctx *gin.Context)
-	UpdateUserIsActive(ctx *gin.Context)
-}
 
 type UserController struct {
 	createUserCase         admincase.ICreateUser
@@ -28,7 +24,7 @@ func NewUserController(createUserCase admincase.ICreateUser, updateUserIsActive 
 func (u UserController) CreateUser(ctx *gin.Context) {
 
 	accessToken := ctx.MustGet(middlewares.AccessTokenKey).(string)
-	req := ctx.MustGet(middlewares.BodyKey).(*admincase.CreateUserReq)
+	req := ctx.MustGet(middlewares.BodyKey).(*dtos.CreateUserReq)
 
 	err := u.createUserCase.Handle(accessToken, req)
 	if err != nil {
@@ -47,7 +43,7 @@ func (u UserController) UpdateUserIsActive(ctx *gin.Context) {
 
 	// parse request
 	accessToken := ctx.MustGet(middlewares.AccessTokenKey).(string)
-	req := ctx.MustGet(middlewares.BodyKey).(*admincase.UpdateUserIsActiveReq)
+	req := ctx.MustGet(middlewares.BodyKey).(*dtos.UpdateUserIsActiveReq)
 	userIdRaw := ctx.Param("id")
 
 	userId, err := uuid.Parse(userIdRaw)
@@ -64,13 +60,13 @@ func (u UserController) UpdateUserIsActive(ctx *gin.Context) {
 	if err != nil {
 
 		switch {
-		case errors.Is(err, admincase.ErrUserAlreadyActive):
+		case errors.Is(err, errs.ErrUserAlreadyActive):
 			ctx.JSON(400, types.ResponseType{
 				Code:    "AA",
 				Message: "user is already active",
 			})
 			return
-		case errors.Is(err, admincase.ErrUserAlreadyDisable):
+		case errors.Is(err, errs.ErrUserAlreadyDisable):
 			ctx.JSON(400, types.ResponseType{
 				Code:    "AD",
 				Message: "user is already disable",

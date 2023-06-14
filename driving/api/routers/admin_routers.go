@@ -1,8 +1,8 @@
 package routers
 
 import (
-	"github.com/cable_management/cable_be/app/usecases/admincase"
-	"github.com/cable_management/cable_be/driving/api/controllers/admincontr"
+	"github.com/cable_management/cable_be/app/contracts/driving/api/controllers/admincontr"
+	"github.com/cable_management/cable_be/app/contracts/driving/api/dtos"
 	"github.com/cable_management/cable_be/driving/api/middlewares"
 	"github.com/gin-gonic/gin"
 )
@@ -21,13 +21,13 @@ func (a AdminRouters) Register(router gin.IRouter) {
 
 	adminRouter.POST("/users",
 		middlewares.ParseAccessToken,
-		middlewares.ParseBody[admincase.CreateUserReq],
+		middlewares.ParseBody[dtos.CreateUserReq],
 		a.userContr.CreateUser,
 		middlewares.HandleGlobalErrors)
 
 	adminRouter.PATCH("/users/:id",
 		middlewares.ParseAccessToken,
-		middlewares.ParseBody[admincase.UpdateUserIsActiveReq],
+		middlewares.ParseBody[dtos.UpdateUserIsActiveReq],
 		a.userContr.UpdateUserIsActive,
 		middlewares.HandleGlobalErrors)
 }

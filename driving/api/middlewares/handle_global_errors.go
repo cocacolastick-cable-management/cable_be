@@ -2,8 +2,7 @@ package middlewares
 
 import (
 	"errors"
-	"github.com/cable_management/cable_be/app/domain/services"
-	"github.com/cable_management/cable_be/app/usecases/_share/errs"
+	"github.com/cable_management/cable_be/app/domain/errs"
 	"github.com/cable_management/cable_be/driving/api/_share/constants"
 	"github.com/cable_management/cable_be/driving/api/_share/types"
 	"github.com/gin-gonic/gin"
@@ -29,17 +28,17 @@ func HandleGlobalErrors(ctx *gin.Context) {
 		return
 	}
 
-	if errors.Is(err, services.ErrUnauthenticated) {
+	if errors.Is(err, errs.ErrUnauthenticated) {
 		ctx.JSON(401, UnauthenticatedRes)
 		return
 	}
 
-	if errors.Is(err, services.ErrUnauthorized) {
+	if errors.Is(err, errs.ErrUnauthorized) {
 		ctx.JSON(403, Unauthorized)
 		return
 	}
 
-	if errors.Is(err, services.ErrUserIsDisable) {
+	if errors.Is(err, errs.ErrUserIsDisable) {
 		ctx.JSON(403, DisableAccount)
 		return
 	}

@@ -1,8 +1,10 @@
 package services
 
 import (
-	"github.com/cable_management/cable_be/app/contracts/database/repos"
+	"github.com/cable_management/cable_be/app/contracts/driven/database/repos"
+	"github.com/cable_management/cable_be/app/domain/constants"
 	"github.com/cable_management/cable_be/app/domain/entities"
+	"github.com/cable_management/cable_be/app/domain/errs"
 	"github.com/elliotchance/pie/v2"
 	"github.com/go-playground/validator/v10"
 	"time"
@@ -33,16 +35,16 @@ func (u UserFactory) CreateUser(role, email, name, password string) (user *entit
 
 	err = u.validator.Var(email, "required,email")
 	if err != nil {
-		return nil, entities.ErrInvalidEmail
+		return nil, errs.ErrInvalidEmail
 	}
 
 	matchUser, _ := u.userRepo.FindByEmail(email, nil)
 	if matchUser != nil {
-		return nil, entities.ErrDupEmail
+		return nil, errs.ErrDupEmail
 	}
 
-	if !pie.Contains(entities.RoleList, role) {
-		return nil, entities.ErrInvalidRole
+	if !pie.Contains(constants.RoleList, role) {
+		return nil, errs.ErrInvalidRole
 	}
 
 	// TODO: should I validate name?

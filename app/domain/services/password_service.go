@@ -2,7 +2,7 @@ package services
 
 import (
 	"crypto/rand"
-	"github.com/cable_management/cable_be/app/domain/entities"
+	"github.com/cable_management/cable_be/app/domain/errs"
 	"github.com/go-playground/validator/v10"
 	"golang.org/x/crypto/bcrypt"
 	"math/big"
@@ -30,7 +30,7 @@ func (p PasswordService) Hash(password string) (passwordHash string, err error) 
 
 	err = p.validator.Var(password, PasswordValidateTags)
 	if err != nil {
-		return "", entities.ErrInvalidPassword
+		return "", errs.ErrInvalidPassword
 	}
 
 	salt, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)

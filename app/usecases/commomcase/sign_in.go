@@ -1,26 +1,16 @@
 package commomcase
 
 import (
-	"github.com/cable_management/cable_be/_share/errs"
-	"github.com/cable_management/cable_be/app/contracts/database/repos"
+	shErrs "github.com/cable_management/cable_be/_share/errs"
+	"github.com/cable_management/cable_be/app/contracts/driven/database/repos"
+	"github.com/cable_management/cable_be/app/contracts/driving/api/dtos"
 	"github.com/cable_management/cable_be/app/domain/entities"
+	"github.com/cable_management/cable_be/app/domain/errs"
 	"github.com/cable_management/cable_be/app/domain/services"
 )
 
-type SignInRequest struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
-type SignInResponse struct {
-	Email     string              `json:"email"`
-	Role      string              `json:"role"`
-	Name      string              `json:"name"`
-	AuthToken *services.AuthToken `json:"authToken"`
-}
-
 type ISignIn interface {
-	Handle(req *SignInRequest) (res *SignInResponse, err error)
+	Handle(req *dtos.SignInRequest) (res *dtos.SignInResponse, err error)
 }
 
 type SignIn struct {
@@ -40,15 +30,15 @@ func NewSignIn(
 		passwordService: passwordService}
 }
 
-func (s SignIn) Handle(req *SignInRequest) (res *SignInResponse, err error) {
+func (s SignIn) Handle(req *dtos.SignInRequest) (res *dtos.SignInResponse, err error) {
 
 	user, _ := s.userRepo.FindByEmail(req.Email, nil)
 	if user == nil {
-		return nil, services.ErrUnauthenticated
+		return nil, errs.ErrUnauthenticated
 	}
 
 	if !s.passwordService.Compare(req.Password, user.PasswordHash) {
-		return nil, services.ErrUnauthenticated
+		return nil, errs.ErrUnauthenticated
 	}
 
 	authToken, err := s.tokenService.CreateAuthToken(user, nil)
@@ -59,13 +49,13 @@ func (s SignIn) Handle(req *SignInRequest) (res *SignInResponse, err error) {
 	return toSignInRes(user, authToken)
 }
 
-func toSignInRes(user *entities.User, authToken *services.AuthToken) (*SignInResponse, error) {
+func toSignInRes(user *entities.User, authToken *services.AuthToken) (*dtos.SignInResponse, error) {
 
 	if user == nil || authToken == nil {
-		return nil, errs.ErrNullException
+		return nil, shErrs.ErrNullException
 	}
 
-	res := &SignInResponse{
+	res := &dtos.SignInResponse{
 		Email:     user.Email,
 		Role:      user.Role,
 		Name:      user.Name,

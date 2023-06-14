@@ -2,16 +2,20 @@ package main
 
 import (
 	"github.com/cable_management/cable_be/_share/env"
-	"github.com/cable_management/cable_be/app/contracts/database/repos"
-	"github.com/cable_management/cable_be/app/contracts/email"
+	"github.com/cable_management/cable_be/app/contracts/driven/database/repos"
+	"github.com/cable_management/cable_be/app/contracts/driven/email"
+	"github.com/cable_management/cable_be/app/contracts/driving/api/controllers/admincontr"
+	"github.com/cable_management/cable_be/app/contracts/driving/api/controllers/commoncontr"
+	"github.com/cable_management/cable_be/app/contracts/driving/api/dtos"
+	"github.com/cable_management/cable_be/app/contracts/driving/api/validations"
 	"github.com/cable_management/cable_be/app/domain/services"
 	"github.com/cable_management/cable_be/app/usecases/admincase"
 	"github.com/cable_management/cable_be/app/usecases/commomcase"
 	"github.com/cable_management/cable_be/driven/database"
-	imRepos "github.com/cable_management/cable_be/driven/database/repos"
-	imEmail "github.com/cable_management/cable_be/driven/email"
-	"github.com/cable_management/cable_be/driving/api/controllers/admincontr"
-	"github.com/cable_management/cable_be/driving/api/controllers/commoncontr"
+	imrepos "github.com/cable_management/cable_be/driven/database/repos"
+	imemail "github.com/cable_management/cable_be/driven/email"
+	imadmincontr "github.com/cable_management/cable_be/driving/api/controllers/admincontr"
+	imcommoncontr "github.com/cable_management/cable_be/driving/api/controllers/commoncontr"
 	"github.com/cable_management/cable_be/driving/api/routers"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -28,7 +32,7 @@ var (
 
 var (
 	validation       *validator.Validate
-	vlCreateUserDepd *admincase.VlCreateUserDepd
+	vlCreateUserDepd *validations.VlCreateUserDepd
 )
 
 var (
@@ -81,11 +85,11 @@ func BuildEnv() {
 
 func StartDb() {
 	db = database.Init(environments.DbDsn)
-	userRepo = imRepos.NewUserRepo(db)
+	userRepo = imrepos.NewUserRepo(db)
 }
 
 func StartEmail() {
-	emailDriven = imEmail.NewEmail(imEmail.EmailConfig{
+	emailDriven = imemail.NewEmail(imemail.Config{
 		MailHost: environments.SmtpEmail,
 		Host:     environments.SmtpHost,
 		Port:     environments.SmtpPort,
@@ -97,9 +101,9 @@ func BuildValidator() {
 
 	validation = validator.New()
 
-	vlCreateUserDepd = admincase.NewVlCreateUserDepd(userRepo)
+	vlCreateUserDepd = validations.NewVlCreateUserDepd(userRepo)
 
-	validation.RegisterStructValidation(vlCreateUserDepd.Handle, admincase.CreateUserReq{})
+	validation.RegisterStructValidation(vlCreateUserDepd.Handle, dtos.CreateUserReq{})
 }
 
 func BuildDomain() {
@@ -119,8 +123,8 @@ func BuildDomain() {
 func StartApi() {
 
 	// controllers
-	authContr = commoncontr.NewAuthController(signInCase)
-	adminUserContr = admincontr.NewUserController(createUserCase, updateUserIsActiveCase)
+	authContr = imcommoncontr.NewAuthController(signInCase)
+	adminUserContr = imadmincontr.NewUserController(createUserCase, updateUserIsActiveCase)
 
 	// routers
 	commonRouters = routers.NewCommonRouters(authContr)

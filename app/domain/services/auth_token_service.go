@@ -1,8 +1,8 @@
 package services
 
 import (
-	"errors"
 	"github.com/cable_management/cable_be/app/domain/entities"
+	"github.com/cable_management/cable_be/app/domain/errs"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 	"time"
@@ -20,10 +20,6 @@ const (
 const (
 	AccessTokenTypeName  = "access-token"
 	RefreshTokenTypeName = "refresh-token"
-)
-
-var (
-	ErrInvalidJwtToken = errors.New("invalid jwt token")
 )
 
 type AuthToken struct {
@@ -126,7 +122,7 @@ func (a AuthTokenService) ParseToClaims(tokenStr string) (*AuthTokenClaims, erro
 	})
 
 	if err != nil || !token.Valid {
-		return nil, ErrInvalidJwtToken
+		return nil, errs.ErrInvalidJwtToken
 	}
 
 	return claims, nil

@@ -1,6 +1,7 @@
 package entities
 
 import (
+	"github.com/cable_management/cable_be/app/domain/errs"
 	"github.com/google/uuid"
 	"time"
 )
@@ -8,7 +9,7 @@ import (
 type Contract struct {
 	EntityBase
 
-	Counter uint `gorm:"autoIncrement"`
+	Counter uint `gorm:"autoIncrement,unique"`
 
 	CableAmount uint
 	StartDay    time.Time
@@ -16,6 +17,21 @@ type Contract struct {
 
 	SupplierId uuid.UUID
 
-	Supplier *User      `gorm:"foreignKey:SupplierId"`
-	Requests []*Request `gorm:"foreignKey:ContractId"`
+	Supplier    *User      `gorm:"foreignKey:SupplierId"`
+	RequestList []*Request `gorm:"foreignKey:ContractId"`
+}
+
+func (c Contract) CalStock() (stock uint, err error) {
+
+	if c.RequestList == nil {
+		return 0, errs.ErrNotIncludeRequestList
+	}
+
+	stock = c.CableAmount
+
+	for _, request := range c.RequestList {
+		stock -= request.CableAmount
+	}
+
+	return stock, nil
 }

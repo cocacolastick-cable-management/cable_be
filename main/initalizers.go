@@ -11,6 +11,7 @@ import (
 	"github.com/cable_management/cable_be/app/domain/services"
 	"github.com/cable_management/cable_be/app/usecases/admincase"
 	"github.com/cable_management/cable_be/app/usecases/commomcase"
+	"github.com/cable_management/cable_be/app/usecases/plannercase"
 	"github.com/cable_management/cable_be/driven/database"
 	imrepos "github.com/cable_management/cable_be/driven/database/repos"
 	imemail "github.com/cable_management/cable_be/driven/email"
@@ -54,6 +55,7 @@ var (
 	createUserCase         admincase.ICreateUser
 	signInCase             commomcase.ISignIn
 	updateUserIsActiveCase admincase.IUpdateUserIsActive
+	createRequestCase      plannercase.ICreateRequest
 )
 
 // api
@@ -124,6 +126,7 @@ func BuildDomain() {
 	createUserCase = admincase.NewCreateUser(userRepo, userFac, validation, authorService, emailDriven, passwordService)
 	signInCase = commomcase.NewSignIn(userRepo, tokenService, passwordService)
 	updateUserIsActiveCase = admincase.NewUpdateUserIsActive(userRepo, authorService, emailDriven)
+	createRequestCase = plannercase.NewCreateRequest(authorService, validation, requestFac, requestRepo)
 }
 
 func StartApi() {

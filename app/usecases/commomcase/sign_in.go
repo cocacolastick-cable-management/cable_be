@@ -10,7 +10,7 @@ import (
 )
 
 type ISignIn interface {
-	Handle(req *dtos.SignInRequest) (res *dtos.SignInResponse, err error)
+	Handle(req *dtos.SignInRequest) (res *dtos.SignInRes, err error)
 }
 
 type SignIn struct {
@@ -30,7 +30,7 @@ func NewSignIn(
 		passwordService: passwordService}
 }
 
-func (s SignIn) Handle(req *dtos.SignInRequest) (res *dtos.SignInResponse, err error) {
+func (s SignIn) Handle(req *dtos.SignInRequest) (res *dtos.SignInRes, err error) {
 
 	user, _ := s.userRepo.FindByEmail(req.Email, nil)
 	if user == nil {
@@ -49,13 +49,13 @@ func (s SignIn) Handle(req *dtos.SignInRequest) (res *dtos.SignInResponse, err e
 	return toSignInRes(user, authToken)
 }
 
-func toSignInRes(user *entities.User, authToken *services.AuthToken) (*dtos.SignInResponse, error) {
+func toSignInRes(user *entities.User, authToken *services.AuthToken) (*dtos.SignInRes, error) {
 
 	if user == nil || authToken == nil {
 		return nil, shErrs.ErrNullException
 	}
 
-	res := &dtos.SignInResponse{
+	res := &dtos.SignInRes{
 		Email:     user.Email,
 		Role:      user.Role,
 		Name:      user.Name,

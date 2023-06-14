@@ -17,7 +17,7 @@ type SignInRequest struct {
 	Password string `json:"password"`
 }
 
-type SignInResponse struct {
+type SignInRes struct {
 	Email     string              `json:"email"`
 	Role      string              `json:"role"`
 	Name      string              `json:"name"`

@@ -23,3 +23,9 @@ type SignInRes struct {
 	Name      string              `json:"name"`
 	AuthToken *services.AuthToken `json:"authToken"`
 }
+
+type CreateRequestReq struct {
+	CableAmount     uint   `json:"cableAmount"`
+	ContractCounter uint   `json:"contractCounter"`
+	ContractorEmail string `json:"contractorEmail"`
+}

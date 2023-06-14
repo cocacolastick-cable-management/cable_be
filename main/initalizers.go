@@ -29,6 +29,7 @@ var (
 	db       *gorm.DB
 	userRepo repos.IUserRepo
 	contractRepo repos.IContractRepo
+	requestRepo  repos.IRequestRepo
 )
 
 var (
@@ -88,6 +89,7 @@ func StartDb() {
 	db = database.Init(environments.DbDsn)
 	userRepo = imrepos.NewUserRepo(db)
 	contractRepo = imrepos.NewContractRepo(db)
+	requestRepo = imrepos.NewRequestRepo(db)
 }
 
 func StartEmail() {

@@ -26,8 +26,8 @@ import (
 var environments env.Env
 
 var (
-	db       *gorm.DB
-	userRepo repos.IUserRepo
+	db           *gorm.DB
+	userRepo     repos.IUserRepo
 	contractRepo repos.IContractRepo
 	requestRepo  repos.IRequestRepo
 )

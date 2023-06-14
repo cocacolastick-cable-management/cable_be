@@ -28,6 +28,7 @@ var environments env.Env
 var (
 	db       *gorm.DB
 	userRepo repos.IUserRepo
+	contractRepo repos.IContractRepo
 )
 
 var (
@@ -86,6 +87,7 @@ func BuildEnv() {
 func StartDb() {
 	db = database.Init(environments.DbDsn)
 	userRepo = imrepos.NewUserRepo(db)
+	contractRepo = imrepos.NewContractRepo(db)
 }
 
 func StartEmail() {

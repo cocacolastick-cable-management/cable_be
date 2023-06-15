@@ -1,7 +1,11 @@
 package repos
 
-import "github.com/cable_management/cable_be/app/domain/entities"
+import (
+	"github.com/cable_management/cable_be/app/domain/entities"
+	"github.com/google/uuid"
+)
 
 type IRequestRepo interface {
 	Insert(request *entities.Request) error
+	FindById(id uuid.UUID, withs []string) (*entities.Request, error)
 }

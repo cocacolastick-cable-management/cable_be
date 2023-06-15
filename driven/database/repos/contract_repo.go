@@ -16,13 +16,12 @@ func NewContractRepo(db *gorm.DB) *ContractRepo {
 func (c ContractRepo) FindByCounter(counter uint, withs []string) (*entities.Contract, error) {
 
 	query := c.db
-
 	for _, with := range withs {
-		query.Preload(with)
+		query = query.Preload(with)
 	}
 
 	contract := new(entities.Contract)
-	result := c.db.First(&contract, "contracts.counter = ?", counter)
+	result := query.First(&contract, "contracts.counter = ?", counter)
 
 	return contract, result.Error
 }

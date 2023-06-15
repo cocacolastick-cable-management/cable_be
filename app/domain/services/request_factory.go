@@ -5,11 +5,13 @@ import (
 	"github.com/cable_management/cable_be/app/domain/constants"
 	"github.com/cable_management/cable_be/app/domain/entities"
 	"github.com/cable_management/cable_be/app/domain/errs"
+	"github.com/google/uuid"
 	"time"
 )
 
 type IRequestFactory interface {
-	CreateRequest(cableAmount uint, contractCounter uint, contractorEmail string) (request *entities.Request, err error)
+	CreateRequest(cableAmount uint, contractCounter uint, contractorEmail string, plannerId uuid.UUID) (request *entities.Request, err error)
+	// TODO IsRequestValid
 }
 
 type RequestFactory struct {
@@ -21,7 +23,13 @@ func NewRequestFactory(contractRepo repos.IContractRepo, userRepo repos.IUserRep
 	return &RequestFactory{contractRepo: contractRepo, userRepo: userRepo}
 }
 
-func (r RequestFactory) CreateRequest(cableAmount uint, contractCounter uint, contractorEmail string) (request *entities.Request, err error) {
+func (r RequestFactory) CreateRequest(cableAmount uint, contractCounter uint, contractorEmail string, plannerId uuid.UUID) (request *entities.Request, err error) {
+
+	// validate planner
+	planner, _ := r.userRepo.FindById(plannerId, nil)
+	if planner == nil || planner.Role != constants.RolePlanner {
+		return nil, errs.ErrPlannerNotFound
+	}
 
 	// find contractor
 	contractor, _ := r.userRepo.FindByEmail(contractorEmail, nil)
@@ -53,5 +61,6 @@ func (r RequestFactory) CreateRequest(cableAmount uint, contractCounter uint, co
 		cableAmount,
 		contract.Id,
 		contractor.Id,
+		planner.Id,
 		time.Now()), nil
 }

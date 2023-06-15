@@ -18,8 +18,16 @@ const (
 	StatusCanceled  = "canceled"
 )
 
+var (
+	StatusList = []string{StatusNew, StatusReady, StatusCanceled, StatusCollected}
+)
+
 const (
 	ActionCreate = "create"
 	ActionUpdate = "update"
 	ActionCancel = "cancel"
+)
+
+var (
+	ActionList = []string{ActionCancel, ActionUpdate, ActionCreate}
 )

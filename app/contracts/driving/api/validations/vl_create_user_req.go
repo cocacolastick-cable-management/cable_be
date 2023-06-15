@@ -8,15 +8,15 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-type VlCreateUserDepd struct {
+type VlCreateUserReq struct {
 	userRepo repos.IUserRepo
 }
 
-func NewVlCreateUserDepd(userRepo repos.IUserRepo) *VlCreateUserDepd {
-	return &VlCreateUserDepd{userRepo: userRepo}
+func NewVlCreateUserReq(userRepo repos.IUserRepo) *VlCreateUserReq {
+	return &VlCreateUserReq{userRepo: userRepo}
 }
 
-func (v VlCreateUserDepd) Handle(sl validator.StructLevel) {
+func (v VlCreateUserReq) Handle(sl validator.StructLevel) {
 
 	req := sl.Current().Interface().(dtos.CreateUserReq)
 

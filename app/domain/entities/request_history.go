@@ -1,6 +1,9 @@
 package entities
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+	"time"
+)
 
 type RequestHistory struct {
 	EntityBase
@@ -13,4 +16,19 @@ type RequestHistory struct {
 
 	Creator *User    `gorm:"foreignKey:CreatorId"`
 	Request *Request `gorm:"foreignKey:RequestId"`
+}
+
+func NewRequestHistory(
+	action string,
+	status string,
+	creatorId uuid.UUID,
+	requestId uuid.UUID,
+	createdAt time.Time) *RequestHistory {
+
+	return &RequestHistory{
+		EntityBase: NewEntityBase(createdAt),
+		Action:     action,
+		Status:     status,
+		CreatorId:  creatorId,
+		RequestId:  requestId}
 }

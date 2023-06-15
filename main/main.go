@@ -6,6 +6,7 @@ func main() {
 	BuildEnv()
 
 	StartDb()
+
 	StartEmail()
 
 	BuildValidator()

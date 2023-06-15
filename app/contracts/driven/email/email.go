@@ -1,6 +1,9 @@
 package email
 
-import "github.com/cable_management/cable_be/app/domain/entities"
+import (
+	"github.com/cable_management/cable_be/app/domain/entities"
+	"time"
+)
 
 type MailData struct {
 	Receiver string
@@ -12,7 +15,10 @@ type IEmail interface {
 	//send(data *MailData) error
 	SendEmailNewUser(emailDto MailNewUserDto) error
 	SendEmailUpdateUserIsActive(emailDto MailUpdateUserIsActiveDto) error
+	SendEmailOnRequestUpdate(mailDtoList []MailRequestActionDto) error
 }
+
+///
 
 type MailNewUserDto struct {
 	Name     string
@@ -32,3 +38,17 @@ type MailUpdateUserIsActiveDto struct {
 	NewStatus bool
 	Email     string
 }
+
+///
+
+type MailRequestActionDto struct {
+	SenderEmail     string
+	ReceiverEmail   string
+	Action          string
+	Status          string
+	RequestCounter  uint
+	ContractCounter uint
+	Time            time.Time
+}
+
+///

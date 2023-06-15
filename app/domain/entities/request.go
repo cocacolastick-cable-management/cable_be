@@ -14,9 +14,11 @@ type Request struct {
 
 	ContractId   uuid.UUID
 	ContractorId uuid.UUID
+	PlannerId    uuid.UUID
 
 	Contract    *Contract         `gorm:"foreignKey:ContractId"`
 	Contractor  *User             `gorm:"foreignKey:ContractorId"`
+	Planner     *User             `gorm:"foreignKey:PlannerId"`
 	HistoryList []*RequestHistory `gorm:"foreignKey:RequestId"`
 }
 
@@ -25,6 +27,7 @@ func NewRequest(
 	cableAmount uint,
 	contractId uuid.UUID,
 	contractorId uuid.UUID,
+	plannerId uuid.UUID,
 	createdAt time.Time) *Request {
 
 	return &Request{
@@ -32,5 +35,6 @@ func NewRequest(
 		Status:       status,
 		CableAmount:  cableAmount,
 		ContractId:   contractId,
+		PlannerId:    plannerId,
 		ContractorId: contractorId}
 }

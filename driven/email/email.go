@@ -3,6 +3,7 @@ package email
 import (
 	"fmt"
 	"github.com/cable_management/cable_be/app/contracts/driven/email"
+	"github.com/cable_management/cable_be/app/domain/constants"
 	"log"
 	"net/smtp"
 )
@@ -66,4 +67,35 @@ func (e Email) SendEmailUpdateUserIsActive(emailDto email.MailUpdateUserIsActive
 	})
 
 	return err
+}
+
+func (e Email) SendEmailOnRequestUpdate(mailDtoList []email.MailRequestActionDto) error {
+
+	for _, mail := range mailDtoList {
+
+		mail := mail
+		go func() {
+
+			body := ""
+			switch mail.Action {
+			case constants.ActionCreate:
+				// body for ActionCreate
+				body = fmt.Sprintf("%v just create a new request-%v on contract-%v", mail.SenderEmail, mail.RequestCounter, mail.ContractCounter)
+			case constants.ActionUpdate:
+				// body for ActionUpdate
+				body = fmt.Sprintf("%v just mark request-%v as action%v", mail.SenderEmail, mail.RequestCounter, mail.Status)
+			case constants.ActionCancel:
+				// body for CancelAction
+				body = fmt.Sprintf("%v cancel the request-%v on contract-%v", mail.SenderEmail, mail.RequestCounter, mail.ContractCounter)
+			}
+
+			_ = e.send(&email.MailData{
+				Receiver: mail.ReceiverEmail,
+				Subject:  mail.SenderEmail,
+				Body:     body,
+			})
+		}()
+	}
+
+	return nil
 }

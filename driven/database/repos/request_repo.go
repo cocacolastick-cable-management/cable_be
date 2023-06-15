@@ -19,6 +19,11 @@ func (r RequestRepo) Insert(request *entities.Request) error {
 	return result.Error
 }
 
+func (r RequestRepo) Save(request *entities.Request) error {
+	result := r.db.Save(request)
+	return result.Error
+}
+
 func (r RequestRepo) FindById(id uuid.UUID, withs []string) (*entities.Request, error) {
 
 	query := r.db
@@ -26,8 +31,8 @@ func (r RequestRepo) FindById(id uuid.UUID, withs []string) (*entities.Request, 
 		query = query.Preload(with)
 	}
 
-	request := new(entities.Request)
-	result := query.First(&request, "request.id = ?", id)
+	var request *entities.Request
+	result := query.First(&request, "requests.id = ?", id)
 
 	return request, result.Error
 }

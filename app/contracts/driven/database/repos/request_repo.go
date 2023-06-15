@@ -7,5 +7,6 @@ import (
 
 type IRequestRepo interface {
 	Insert(request *entities.Request) error
+	Save(request *entities.Request) error
 	FindById(id uuid.UUID, withs []string) (*entities.Request, error)
 }

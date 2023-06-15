@@ -16,6 +16,7 @@ var (
 	ErrInvalidJwtToken           = errors.New("invalid jwt token")
 	ErrUserNotFound              = errors.New("not found user")
 	ErrRequestHistoryNotFound    = errors.New("not found request history")
+	ErrRequestNotFound           = errors.New("not found request")
 	ErrContractNotFound          = errors.New("not found contract")
 	ErrContractorNotFound        = errors.New("not found contractor")
 	ErrPlannerNotFound           = errors.New("not found planner")

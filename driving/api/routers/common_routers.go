@@ -8,11 +8,12 @@ import (
 )
 
 type CommonRouters struct {
-	authContr commoncontr.IAuthController
+	authContr    commoncontr.IAuthController
+	requestContr commoncontr.IRequestController
 }
 
-func NewCommonRouters(authContr commoncontr.IAuthController) *CommonRouters {
-	return &CommonRouters{authContr: authContr}
+func NewCommonRouters(authContr commoncontr.IAuthController, requestContr commoncontr.IRequestController) *CommonRouters {
+	return &CommonRouters{authContr: authContr, requestContr: requestContr}
 }
 
 func (a CommonRouters) Register(router gin.IRouter) {
@@ -22,5 +23,11 @@ func (a CommonRouters) Register(router gin.IRouter) {
 	commonRouter.POST("/sign-in",
 		middlewares.ParseBody[dtos.SignInRequest],
 		a.authContr.SignIn,
+		middlewares.HandleGlobalErrors)
+
+	commonRouter.PATCH("/requests/:id",
+		middlewares.ParseAccessToken,
+		middlewares.ParseBody[dtos.UpdateRequestStatusRequest],
+		a.requestContr.UpdateRequestStatus,
 		middlewares.HandleGlobalErrors)
 }

@@ -48,6 +48,22 @@ func HandleGlobalErrors(ctx *gin.Context) {
 		return
 	}
 
+	if errors.Is(err, errs.ErrInvalidRequestStatus) {
+		ctx.JSON(400, types.ResponseType{
+			Code:    "BR",
+			Message: "invalid request",
+		})
+		return
+	}
+
+	if errors.Is(err, errs.ErrRequestNotFound) {
+		ctx.JSON(404, types.ResponseType{
+			Code:    "NF",
+			Message: "request is not found",
+		})
+		return
+	}
+
 	panic(err)
 }
 

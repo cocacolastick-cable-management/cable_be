@@ -62,10 +62,11 @@ var (
 	requestHistoryFac services.IRequestHistoryFactory
 
 	// usecases
-	createUserCase         admincase.ICreateUser
-	signInCase             commomcase.ISignIn
-	updateUserIsActiveCase admincase.IUpdateUserIsActive
-	createRequestCase      plannercase.ICreateRequest
+	createUserCase          admincase.ICreateUser
+	signInCase              commomcase.ISignIn
+	updateUserIsActiveCase  admincase.IUpdateUserIsActive
+	createRequestCase       plannercase.ICreateRequest
+	updateRequestStatusCase commomcase.IUpdateRequestStatus
 )
 
 // api
@@ -74,6 +75,7 @@ var (
 	authContr           commoncontr.IAuthController
 	adminUserContr      admincontr.IUserController
 	plannerRequestContr plannercontr.IRequestContr
+	commonRequestContr  commoncontr.IRequestController
 
 	// routers
 	commonRouters  routers.IRouterBase
@@ -144,6 +146,7 @@ func BuildDomain() {
 	signInCase = commomcase.NewSignIn(userRepo, tokenService, passwordService)
 	updateUserIsActiveCase = admincase.NewUpdateUserIsActive(userRepo, authorService, emailDriven)
 	createRequestCase = plannercase.NewCreateRequest(authorService, validation, requestFac, requestRepo, requestHistoryFac, mailDataFac, requestHistoryRepo, emailDriven)
+	updateRequestStatusCase = commomcase.NewUpdateRequestStatus(authorService, requestRepo, requestHistoryRepo, userRepo, validation, requestHistoryFac, mailDataFac, emailDriven)
 }
 
 func StartApi() {
@@ -152,9 +155,10 @@ func StartApi() {
 	authContr = imcommoncontr.NewAuthController(signInCase)
 	adminUserContr = imadmincontr.NewUserController(createUserCase, updateUserIsActiveCase)
 	plannerRequestContr = implannercontr.NewRequestContr(createRequestCase)
+	commonRequestContr = imcommoncontr.NewRequestController(updateRequestStatusCase)
 
 	// routers
-	commonRouters = routers.NewCommonRouters(authContr)
+	commonRouters = routers.NewCommonRouters(authContr, commonRequestContr)
 	adminRouters = routers.NewAdminRouters(adminUserContr)
 	plannerRouters = routers.NewPlannerRouters(plannerRequestContr)
 

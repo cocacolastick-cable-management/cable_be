@@ -64,6 +64,14 @@ func HandleGlobalErrors(ctx *gin.Context) {
 		return
 	}
 
+	if errors.Is(err, errs.ErrContractNotFound) {
+		ctx.JSON(400, types.ResponseType{
+			Code:    "CU",
+			Message: "contract is unavailable",
+		})
+		return
+	}
+
 	panic(err)
 }
 

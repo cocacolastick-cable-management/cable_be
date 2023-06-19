@@ -1,6 +1,7 @@
 package entities
 
 import (
+	sherrs "github.com/cable_management/cable_be/_share/errs"
 	"github.com/cable_management/cable_be/app/domain/errs"
 	"github.com/google/uuid"
 	"time"
@@ -34,4 +35,13 @@ func (c Contract) CalStock() (stock uint, err error) {
 	}
 
 	return stock, nil
+}
+
+func (c Contract) IsAvailable() (bool, error) {
+
+	if c.Supplier == nil {
+		return false, sherrs.ErrNullReference
+	}
+
+	return c.Supplier.IsActive && c.EndDay.Before(time.Now()), nil
 }

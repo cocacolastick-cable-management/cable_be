@@ -45,8 +45,9 @@ func (r RequestFactory) CreateRequest(cableAmount uint, contractCounter uint, co
 	if contract == nil {
 		return nil, errs.ErrContractNotFound
 	}
-	if !contract.Supplier.IsActive {
-		return nil, errs.ErrSupplierIsDisable
+	// I think we should check the supplier.IsActive and expire day separately
+	if isAvailable, _ := contract.IsAvailable(); !isAvailable {
+		return nil, errs.ErrContractUnavailable
 	}
 
 	// validate cableAmount

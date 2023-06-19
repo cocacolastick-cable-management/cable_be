@@ -5,6 +5,7 @@ import (
 	"github.com/cable_management/cable_be/app/contracts/driving/api/dtos"
 	"github.com/cable_management/cable_be/app/domain/constants"
 	"github.com/go-playground/validator/v10"
+	"time"
 )
 
 type VlCreateRequestReq struct {
@@ -34,8 +35,11 @@ func (v VlCreateRequestReq) Handle(sl validator.StructLevel) {
 	if contract == nil {
 		sl.ReportError(req.ContractCounter, "contractCounter", "contractCounter", "notfound", "not found contract")
 	}
+	if contract.EndDay.Before(time.Now()) {
+		sl.ReportError(req.ContractCounter, "contractCounter", "contractCounter", "expire", "contract is expired")
+	}
 	if !contract.Supplier.IsActive {
-		sl.ReportError(req.ContractCounter, "contractCounter", "contractCounter", "notfound", "this contract is disable")
+		sl.ReportError(req.ContractCounter, "contractCounter", "contractCounter", "unavailable", "supplier of the contract is disbale")
 	}
 
 	// validate cableAmount

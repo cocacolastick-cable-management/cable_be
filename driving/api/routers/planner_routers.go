@@ -8,11 +8,12 @@ import (
 )
 
 type PlannerRouters struct {
-	requestContr plannercontr.IRequestContr
+	requestContr  plannercontr.IRequestContr
+	contractContr plannercontr.IContractContr
 }
 
-func NewPlannerRouters(requestContr plannercontr.IRequestContr) *PlannerRouters {
-	return &PlannerRouters{requestContr: requestContr}
+func NewPlannerRouters(requestContr plannercontr.IRequestContr, contractContr plannercontr.IContractContr) *PlannerRouters {
+	return &PlannerRouters{requestContr: requestContr, contractContr: contractContr}
 }
 
 func (p PlannerRouters) Register(router gin.IRouter) {
@@ -28,5 +29,10 @@ func (p PlannerRouters) Register(router gin.IRouter) {
 	plannerRouter.GET("/requests",
 		middlewares.ParseAccessToken,
 		p.requestContr.GetRequestList,
+		middlewares.HandleGlobalErrors)
+
+	plannerRouter.GET("/contracts",
+		middlewares.ParseAccessToken,
+		p.contractContr.GetContractList,
 		middlewares.HandleGlobalErrors)
 }

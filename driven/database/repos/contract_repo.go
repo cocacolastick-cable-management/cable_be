@@ -25,3 +25,20 @@ func (c ContractRepo) FindByCounter(counter uint, withs []string) (*entities.Con
 
 	return contract, result.Error
 }
+
+func (c ContractRepo) GetAll(withs []string) ([]*entities.Contract, error) {
+
+	var contractList []*entities.Contract
+	query := c.db
+
+	for _, with := range withs {
+		query = query.Preload(with)
+	}
+
+	result := query.Find(&contractList)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return contractList, nil
+}

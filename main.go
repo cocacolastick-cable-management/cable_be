@@ -131,6 +131,7 @@ var (
 	createRequestCase       plannercase.ICreateRequest
 	updateRequestStatusCase commomcase.IUpdateRequestStatus
 	getRequestListCase      plannercase.IGetRequestList
+	getContractListCase     plannercase.IGetContractList
 )
 
 func BuildDomain() {
@@ -151,15 +152,17 @@ func BuildDomain() {
 	createRequestCase = plannercase.NewCreateRequest(authorService, validation, requestFac, requestRepo, requestHistoryFac, mailDataFac, requestHistoryRepo, emailDriven)
 	updateRequestStatusCase = commomcase.NewUpdateRequestStatus(authorService, requestRepo, requestHistoryRepo, userRepo, validation, requestHistoryFac, mailDataFac, emailDriven)
 	getRequestListCase = plannercase.NewGetRequestList(requestRepo, authorService)
+	getContractListCase = plannercase.NewGetContractList(authorService, contractRepo)
 }
 
 // api
 var (
 	// controllers
-	authContr           commoncontr.IAuthController
-	adminUserContr      admincontr.IUserController
-	plannerRequestContr plannercontr.IRequestContr
-	commonRequestContr  commoncontr.IRequestController
+	authContr            commoncontr.IAuthController
+	adminUserContr       admincontr.IUserController
+	plannerRequestContr  plannercontr.IRequestContr
+	commonRequestContr   commoncontr.IRequestController
+	plannerContractContr plannercontr.IContractContr
 
 	// routers
 	baseRouters    routers.IRouterBase
@@ -175,12 +178,13 @@ func StartApi() {
 	adminUserContr = imadmincontr.NewUserController(createUserCase, updateUserIsActiveCase)
 	plannerRequestContr = implannercontr.NewRequestContr(createRequestCase, getRequestListCase)
 	commonRequestContr = imcommoncontr.NewRequestController(updateRequestStatusCase)
+	plannerContractContr = implannercontr.NewContractContr(getContractListCase)
 
 	// routers
 	baseRouters = routers.NewRouterBase()
 	commonRouters = routers.NewCommonRouters(authContr, commonRequestContr)
 	adminRouters = routers.NewAdminRouters(adminUserContr)
-	plannerRouters = routers.NewPlannerRouters(plannerRequestContr)
+	plannerRouters = routers.NewPlannerRouters(plannerRequestContr, plannerContractContr)
 
 	// init
 	engine := gin.Default()

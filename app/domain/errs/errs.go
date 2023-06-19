@@ -18,6 +18,7 @@ var (
 	ErrRequestHistoryNotFound    = errors.New("not found request history")
 	ErrRequestNotFound           = errors.New("not found request")
 	ErrContractNotFound          = errors.New("not found contract")
+	ErrContractUnavailable       = errors.New("contract is unavailable")
 	ErrContractorNotFound        = errors.New("not found contractor")
 	ErrPlannerNotFound           = errors.New("not found planner")
 	ErrUserAlreadyDisable        = errors.New("user is already disable")

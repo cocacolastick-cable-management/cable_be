@@ -29,7 +29,7 @@ func HandleGlobalErrors(ctx *gin.Context) {
 	}
 
 	if errors.Is(err, errs.ErrUnauthenticated) {
-		ctx.JSON(401, UnauthenticatedRes)
+		ctx.JSON(401, Unauthenticated)
 		return
 	}
 
@@ -68,8 +68,8 @@ func HandleGlobalErrors(ctx *gin.Context) {
 }
 
 var (
-	UnauthenticatedRes = types.ResponseType{
-		Code:    "UA",
+	Unauthenticated = types.ResponseType{
+		Code:    constants.CodeAF,
 		Message: "authenticate failed",
 	}
 
@@ -79,7 +79,7 @@ var (
 	}
 
 	DisableAccount = types.ResponseType{
-		Code:    "DA",
+		Code:    constants.CodeDA,
 		Message: "account is disable",
 	}
 

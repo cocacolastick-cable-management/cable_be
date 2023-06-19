@@ -36,3 +36,20 @@ func (r RequestRepo) FindById(id uuid.UUID, withs []string) (*entities.Request, 
 
 	return request, result.Error
 }
+
+func (r RequestRepo) GetAll(withs []string) ([]*entities.Request, error) {
+
+	var RequestList []*entities.Request
+	query := r.db
+
+	for _, with := range withs {
+		query = query.Preload(with)
+	}
+
+	result := query.Find(&RequestList)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return RequestList, nil
+}

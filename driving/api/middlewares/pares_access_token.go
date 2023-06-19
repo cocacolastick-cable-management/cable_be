@@ -17,6 +17,6 @@ func ParseAccessToken(ctx *gin.Context) {
 		ctx.Set(AccessTokenKey, accessToken)
 		ctx.Next()
 	} else {
-		ctx.JSON(401, UnauthenticatedRes)
+		ctx.JSON(401, Unauthenticated)
 	}
 }

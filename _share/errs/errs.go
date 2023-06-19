@@ -3,5 +3,5 @@ package errs
 import "errors"
 
 var (
-	ErrNullException = errors.New("unexpect null variable")
+	ErrNullReference = errors.New("unexpect null reference")
 )

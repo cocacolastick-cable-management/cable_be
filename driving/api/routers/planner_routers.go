@@ -24,4 +24,9 @@ func (p PlannerRouters) Register(router gin.IRouter) {
 		middlewares.ParseBody[dtos.CreateRequestReq],
 		p.requestContr.CreateRequest,
 		middlewares.HandleGlobalErrors)
+
+	plannerRouter.GET("/requests",
+		middlewares.ParseAccessToken,
+		p.requestContr.GetRequestList,
+		middlewares.HandleGlobalErrors)
 }

@@ -61,24 +61,26 @@ func (u UpdateRequestStatus) Handle(accessToken string, requestId uuid.UUID, req
 		return errs.ErrInvalidRequestStatus
 	}
 
+	// find request
+	request, err := u.requestRepo.FindById(requestId, nil)
+	if err != nil {
+		return errs.ErrRequestNotFound
+	}
+
 	// check permission
 	action := ""
 	switch {
-	case claims.Role == constants.RolePlanner && req.Status == constants.StatusCanceled:
+	case claims.Role == constants.RolePlanner && req.Status == constants.StatusCanceled && request.Status != constants.StatusCanceled:
 		action = constants.ActionCancel
-	case claims.Role == constants.RoleSupplier && req.Status == constants.StatusReady:
+	case claims.Role == constants.RoleSupplier && req.Status == constants.StatusReady && request.Status == constants.StatusNew:
 		action = constants.ActionUpdate
-	case claims.Role == constants.RoleContractor && req.Status == constants.StatusCollected:
+	case claims.Role == constants.RoleContractor && req.Status == constants.StatusCollected && request.Status != constants.StatusReady:
 		action = constants.ActionUpdate
 	default:
 		return errs.ErrUnauthorized
 	}
 
 	// update request
-	request, err := u.requestRepo.FindById(requestId, nil)
-	if err != nil {
-		return errs.ErrRequestNotFound
-	}
 	request.Status = req.Status
 
 	// create history

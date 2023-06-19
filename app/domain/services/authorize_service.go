@@ -34,7 +34,7 @@ func (a AuthorizeService) Authorize(accessToken string, targetRoles []string, ta
 	matchUser, _ := a.userRepo.FindById(claims.UserId, nil)
 
 	if matchUser == nil {
-		return nil, errs.ErrUserNotFound
+		return nil, errs.ErrUnauthenticated
 	}
 
 	if !matchUser.IsActive {

@@ -10,7 +10,7 @@ import (
 )
 
 type ISignIn interface {
-	Handle(req *dtos.SignInRequest) (res *dtos.SignInRes, err error)
+	Handle(req *dtos.SignInRequest) (res *dtos.AuthRes, err error)
 }
 
 type SignIn struct {
@@ -30,7 +30,7 @@ func NewSignIn(
 		passwordService: passwordService}
 }
 
-func (s SignIn) Handle(req *dtos.SignInRequest) (res *dtos.SignInRes, err error) {
+func (s SignIn) Handle(req *dtos.SignInRequest) (res *dtos.AuthRes, err error) {
 
 	user, _ := s.userRepo.FindByEmail(req.Email, nil)
 	if user == nil {
@@ -41,6 +41,10 @@ func (s SignIn) Handle(req *dtos.SignInRequest) (res *dtos.SignInRes, err error)
 		return nil, errs.ErrUnauthenticated
 	}
 
+	if !user.IsActive {
+		return nil, errs.ErrUserIsDisable
+	}
+
 	authToken, err := s.tokenService.CreateAuthToken(user, nil)
 	if err != nil {
 		return nil, err
@@ -49,13 +53,13 @@ func (s SignIn) Handle(req *dtos.SignInRequest) (res *dtos.SignInRes, err error)
 	return toSignInRes(user, authToken)
 }
 
-func toSignInRes(user *entities.User, authToken *services.AuthToken) (*dtos.SignInRes, error) {
+func toSignInRes(user *entities.User, authToken *services.AuthToken) (*dtos.AuthRes, error) {
 
 	if user == nil || authToken == nil {
-		return nil, shErrs.ErrNullException
+		return nil, shErrs.ErrNullReference
 	}
 
-	res := &dtos.SignInRes{
+	res := &dtos.AuthRes{
 		Email:     user.Email,
 		Role:      user.Role,
 		Name:      user.Name,

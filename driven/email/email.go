@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/cable_management/cable_be/app/contracts/driven/email"
 	"github.com/cable_management/cable_be/app/domain/constants"
-	"log"
 	"net/smtp"
 )
 
@@ -35,9 +34,6 @@ func (e Email) send(data *email.MailData) error {
 		data.Body
 
 	err := smtp.SendMail(e.config.Host+":"+e.config.Port, e.auth, e.config.MailHost, []string{data.Receiver}, []byte(mail))
-	if err != nil {
-		log.Fatal(err)
-	}
 
 	return err
 }

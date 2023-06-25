@@ -24,8 +24,8 @@ func (r RequestContr) CreateRequest(ctx *gin.Context) {
 	accessToken := ctx.MustGet(middlewares.AccessTokenKey).(string)
 	req := ctx.MustGet(middlewares.BodyKey).(*dtos.CreateRequestReq)
 
-	// excute
-	err := r.createRequestCase.Handle(accessToken, req)
+	// execute
+	requestRes, err := r.createRequestCase.Handle(accessToken, req)
 
 	// handle error
 	if err != nil {
@@ -37,6 +37,7 @@ func (r RequestContr) CreateRequest(ctx *gin.Context) {
 	ctx.JSON(201, types.ResponseType{
 		Code:    "OK",
 		Message: "Create request successfully",
+		Payload: requestRes,
 	})
 	return
 }

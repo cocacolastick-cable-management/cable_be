@@ -8,12 +8,14 @@ import (
 )
 
 type CommonRouters struct {
-	authContr    commoncontr.IAuthController
-	requestContr commoncontr.IRequestController
+	authContr         commoncontr.IAuthController
+	requestContr      commoncontr.IRequestController
+	userContr         commoncontr.IUserContr
+	notificationContr commoncontr.INotificationContr
 }
 
-func NewCommonRouters(authContr commoncontr.IAuthController, requestContr commoncontr.IRequestController) *CommonRouters {
-	return &CommonRouters{authContr: authContr, requestContr: requestContr}
+func NewCommonRouters(authContr commoncontr.IAuthController, requestContr commoncontr.IRequestController, userContr commoncontr.IUserContr, notificationContr commoncontr.INotificationContr) *CommonRouters {
+	return &CommonRouters{authContr: authContr, requestContr: requestContr, userContr: userContr, notificationContr: notificationContr}
 }
 
 func (a CommonRouters) Register(router gin.IRouter) {
@@ -29,5 +31,21 @@ func (a CommonRouters) Register(router gin.IRouter) {
 		middlewares.ParseAccessToken,
 		middlewares.ParseBody[dtos.UpdateRequestStatusRequest],
 		a.requestContr.UpdateRequestStatus,
+		middlewares.HandleGlobalErrors)
+
+	commonRouter.GET("/users",
+		middlewares.ParseAccessToken,
+		a.userContr.GetUserList,
+		middlewares.HandleGlobalErrors)
+
+	commonRouter.GET("/notifications",
+		middlewares.ParseAccessToken,
+		a.notificationContr.GetNotificationList,
+		middlewares.HandleGlobalErrors)
+
+	commonRouter.PATCH("/notifications/:id",
+		middlewares.ParseAccessToken,
+		middlewares.ParseBody[dtos.UpdateNotificationIsReadReq],
+		a.notificationContr.UpdateNotificationIsRead,
 		middlewares.HandleGlobalErrors)
 }

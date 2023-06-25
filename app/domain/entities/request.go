@@ -8,7 +8,7 @@ import (
 type Request struct {
 	EntityBase
 
-	Counter     uint   `gorm:"autoIncrement,unique"`
+	Counter     uint   `gorm:"autoIncrement;unique"`
 	Status      string `gorm:"type:varchar"`
 	CableAmount uint
 

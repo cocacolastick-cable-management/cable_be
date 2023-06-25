@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/cable_management/cable_be/_share/errs"
 	"github.com/cable_management/cable_be/app/contracts/driving/api/dtos"
+	"github.com/cable_management/cable_be/app/domain/constants"
 	"github.com/cable_management/cable_be/app/domain/entities"
 )
 
@@ -23,11 +24,11 @@ func ToRequestResponse(request *entities.Request) (*dtos.RequestRes, error) {
 
 	return &dtos.RequestRes{
 		Id:              request.Id,
-		Name:            fmt.Sprintf("request-%v", request.Counter),
+		Name:            fmt.Sprintf("%v-%v", constants.ObjTyRequest, request.Counter),
 		Status:          request.Status,
 		CableAmount:     request.CableAmount,
 		HistoryList:     historyResList,
-		ContractName:    fmt.Sprintf("contract-%v", request.Contract.Counter),
+		ContractName:    fmt.Sprintf("%v-%v", constants.ObjTyContract, request.Contract.Counter),
 		ContractId:      request.ContractId,
 		SupplierEmail:   request.Contract.Supplier.Email,
 		SupplierId:      request.Contract.SupplierId,

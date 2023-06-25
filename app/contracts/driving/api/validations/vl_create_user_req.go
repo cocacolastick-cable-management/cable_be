@@ -22,7 +22,7 @@ func (v VlCreateUserReq) Handle(sl validator.StructLevel) {
 
 	matchUser, _ := v.userRepo.FindByEmail(req.Email, nil)
 	if matchUser != nil {
-		sl.ReportError(req.Email, "email", "Email", "duplicated", "duplicated email")
+		sl.ReportError(req.Email, "email", "UserEmail", "duplicated", "duplicated email")
 	}
 
 	if !pie.Contains(constants.RoleList, req.Role) {

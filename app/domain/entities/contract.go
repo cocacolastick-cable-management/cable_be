@@ -2,6 +2,7 @@ package entities
 
 import (
 	sherrs "github.com/cable_management/cable_be/_share/errs"
+	"github.com/cable_management/cable_be/app/domain/constants"
 	"github.com/cable_management/cable_be/app/domain/errs"
 	"github.com/google/uuid"
 	"time"
@@ -10,7 +11,7 @@ import (
 type Contract struct {
 	EntityBase
 
-	Counter uint `gorm:"autoIncrement,unique"`
+	Counter uint `gorm:"autoIncrement;unique"`
 
 	CableAmount uint
 	StartDay    time.Time
@@ -31,6 +32,9 @@ func (c Contract) CalStock() (stock uint, err error) {
 	stock = c.CableAmount
 
 	for _, request := range c.RequestList {
+		if request.Status == constants.StatusCanceled {
+			continue
+		}
 		stock -= request.CableAmount
 	}
 
@@ -43,5 +47,10 @@ func (c Contract) IsAvailable() (bool, error) {
 		return false, sherrs.ErrNullReference
 	}
 
-	return c.Supplier.IsActive && c.EndDay.Before(time.Now()), nil
+	stock, err := c.CalStock()
+	if err != nil {
+		return false, err
+	}
+
+	return c.Supplier.IsActive && c.EndDay.After(time.Now()) && stock > 0, nil
 }

@@ -33,7 +33,7 @@ func (r RequestController) UpdateRequestStatus(ctx *gin.Context) {
 		return
 	}
 
-	err = r.updateRequestStatusCase.Handle(accessToken, requestId, reqBody)
+	requestRes, err := r.updateRequestStatusCase.Handle(accessToken, requestId, reqBody)
 
 	if err != nil {
 		ctx.Set(constants.ErrKey, err)
@@ -44,6 +44,7 @@ func (r RequestController) UpdateRequestStatus(ctx *gin.Context) {
 	ctx.JSON(200, types.ResponseType{
 		Code:    "OK",
 		Message: "update request successfully",
+		Payload: requestRes,
 	})
 	return
 }

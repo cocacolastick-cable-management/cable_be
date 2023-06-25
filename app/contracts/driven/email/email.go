@@ -12,13 +12,10 @@ type MailData struct {
 }
 
 type IEmail interface {
-	//send(data *MailData) error
 	SendEmailNewUser(emailDto MailNewUserDto) error
 	SendEmailUpdateUserIsActive(emailDto MailUpdateUserIsActiveDto) error
 	SendEmailOnRequestUpdate(mailDtoList []MailRequestActionDto) error
 }
-
-///
 
 type MailNewUserDto struct {
 	Name     string

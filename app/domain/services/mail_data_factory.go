@@ -31,14 +31,14 @@ func (e MailDataFactory) CreateMailDataListForRequestAction(historyId uuid.UUID)
 	}
 
 	// check if any related user is disabled
-	switch {
-	case !history.Request.Contractor.IsActive:
-		return nil, errs.ErrContractorIsDisable
-	case !history.Request.Contract.Supplier.IsActive:
-		return nil, errs.ErrSupplierIsDisable
-		//case !history.Request.Planner.IsActive:
-		//	return nil, errs.ErrPlannerIsDisable
-	}
+	//switch {
+	//case !history.Request.Contractor.IsActive:
+	//	return nil, errs.ErrContractorIsDisable
+	//case !history.Request.Contract.Supplier.IsActive:
+	//	return nil, errs.ErrSupplierIsDisable
+	//	//case !history.Request.Planner.IsActive:
+	//	//	return nil, errs.ErrPlannerIsDisable
+	//}
 
 	// get related users
 	relatedUserList := make([]*entities.User, 0, 3)

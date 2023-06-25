@@ -30,6 +30,7 @@ type AuthToken struct {
 type AuthTokenClaims struct {
 	jwt.RegisteredClaims
 	Role        string    `json:"role"`
+	UserEmail   string    `json:"email"`
 	Type        string    `json:"type"`
 	UserId      uuid.UUID `json:"user_id"`
 	Permissions []string  `json:"permissions,omitempty"`
@@ -55,6 +56,7 @@ func (a AuthTokenService) CreateAuthToken(user *entities.User, permissions []str
 		jwt.SigningMethodHS256,
 		AuthTokenClaims{
 			Role:        user.Role,
+			UserEmail:   user.Email,
 			UserId:      user.Id,
 			Type:        AccessTokenTypeName,
 			Permissions: permissions,
@@ -66,9 +68,10 @@ func (a AuthTokenService) CreateAuthToken(user *entities.User, permissions []str
 	refreshToken := jwt.NewWithClaims(
 		jwt.SigningMethodHS256,
 		AuthTokenClaims{
-			Role:   user.Role,
-			UserId: user.Id,
-			Type:   RefreshTokenTypeName,
+			Role:      user.Role,
+			UserEmail: user.Email,
+			UserId:    user.Id,
+			Type:      RefreshTokenTypeName,
 			RegisteredClaims: jwt.RegisteredClaims{
 				ExpiresAt: jwt.NewNumericDate(time.Now().Add(RefreshTokenExpire)),
 			},

@@ -10,4 +10,6 @@ type IRequestRepo interface {
 	Save(request *entities.Request) error
 	FindById(id uuid.UUID, withs []string) (*entities.Request, error)
 	GetAll(withs []string) ([]*entities.Request, error)
+	GetBySupplierId(supplierId uuid.UUID, withs []string) ([]*entities.Request, error)
+	GetByContractorId(supplierId uuid.UUID, withs []string) ([]*entities.Request, error)
 }

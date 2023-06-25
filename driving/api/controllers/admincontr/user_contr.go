@@ -26,7 +26,7 @@ func (u UserController) CreateUser(ctx *gin.Context) {
 	accessToken := ctx.MustGet(middlewares.AccessTokenKey).(string)
 	req := ctx.MustGet(middlewares.BodyKey).(*dtos.CreateUserReq)
 
-	err := u.createUserCase.Handle(accessToken, req)
+	userRes, err := u.createUserCase.Handle(accessToken, req)
 	if err != nil {
 		ctx.Set(constants.ErrKey, err)
 		ctx.Next()
@@ -36,6 +36,7 @@ func (u UserController) CreateUser(ctx *gin.Context) {
 	ctx.JSON(201, types.ResponseType{
 		Code:    "OK",
 		Message: "Create user successfully",
+		Payload: userRes,
 	})
 }
 
@@ -54,7 +55,7 @@ func (u UserController) UpdateUserIsActive(ctx *gin.Context) {
 	}
 
 	// execute
-	err = u.updateUserIsActiveCase.Handle(accessToken, userId, req)
+	userRes, err := u.updateUserIsActiveCase.Handle(accessToken, userId, req)
 
 	// handle error
 	if err != nil {
@@ -82,6 +83,7 @@ func (u UserController) UpdateUserIsActive(ctx *gin.Context) {
 	ctx.JSON(200, types.ResponseType{
 		Code:    "OK",
 		Message: "update user successfully",
+		Payload: userRes,
 	})
 	return
 }

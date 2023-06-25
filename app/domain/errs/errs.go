@@ -15,6 +15,7 @@ var (
 	ErrPlannerIsDisable          = errors.New("planner is disable")
 	ErrInvalidJwtToken           = errors.New("invalid jwt token")
 	ErrUserNotFound              = errors.New("not found user")
+	ErrNotificationNotFound      = errors.New("not found notification")
 	ErrRequestHistoryNotFound    = errors.New("not found request history")
 	ErrRequestNotFound           = errors.New("not found request")
 	ErrContractNotFound          = errors.New("not found contract")

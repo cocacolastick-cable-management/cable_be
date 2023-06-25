@@ -12,6 +12,8 @@ type User struct {
 	Name         string `gorm:"type:varchar"`
 	PasswordHash string `gorm:"type:varchar"`
 	IsActive     bool
+
+	NotificationList []*Notification `gorm:"foreignKey:ReceiverId"`
 }
 
 func NewUser(

@@ -3,7 +3,9 @@ package commomcase
 import (
 	"github.com/cable_management/cable_be/app/contracts/driven/database/repos"
 	"github.com/cable_management/cable_be/app/contracts/driven/email"
+	"github.com/cable_management/cable_be/app/contracts/driven/sse"
 	"github.com/cable_management/cable_be/app/contracts/driving/api/dtos"
+	"github.com/cable_management/cable_be/app/contracts/driving/api/maps"
 	"github.com/cable_management/cable_be/app/domain/constants"
 	"github.com/cable_management/cable_be/app/domain/errs"
 	"github.com/cable_management/cable_be/app/domain/services"
@@ -13,7 +15,7 @@ import (
 )
 
 type IUpdateRequestStatus interface {
-	Handle(accessToken string, requestId uuid.UUID, req *dtos.UpdateRequestStatusRequest) error
+	Handle(accessToken string, requestId uuid.UUID, req *dtos.UpdateRequestStatusRequest) (*dtos.RequestRes, error)
 }
 
 type UpdateRequestStatus struct {
@@ -25,6 +27,9 @@ type UpdateRequestStatus struct {
 	requestHistoryFac  services.IRequestHistoryFactory
 	mailDataFactory    services.IMailDataFactory
 	emailDriven        email.IEmail
+	notificationFac    services.INotificationFactory
+	notificationRepo   repos.INotificationRepo
+	sseDriven          sse.ISSEDriven
 }
 
 func NewUpdateRequestStatus(
@@ -35,7 +40,10 @@ func NewUpdateRequestStatus(
 	validator *validator.Validate,
 	requestHistoryFac services.IRequestHistoryFactory,
 	mailDataFactory services.IMailDataFactory,
-	emailDriven email.IEmail) *UpdateRequestStatus {
+	emailDriven email.IEmail,
+	notificationFac services.INotificationFactory,
+	notificationRepo repos.INotificationRepo,
+	sseDriven sse.ISSEDriven) *UpdateRequestStatus {
 
 	return &UpdateRequestStatus{
 		authorService:      authorService,
@@ -45,26 +53,29 @@ func NewUpdateRequestStatus(
 		validator:          validator,
 		requestHistoryFac:  requestHistoryFac,
 		mailDataFactory:    mailDataFactory,
-		emailDriven:        emailDriven}
+		emailDriven:        emailDriven,
+		notificationFac:    notificationFac,
+		notificationRepo:   notificationRepo,
+		sseDriven:          sseDriven}
 }
 
-func (u UpdateRequestStatus) Handle(accessToken string, requestId uuid.UUID, req *dtos.UpdateRequestStatusRequest) error {
+func (u UpdateRequestStatus) Handle(accessToken string, requestId uuid.UUID, req *dtos.UpdateRequestStatusRequest) (*dtos.RequestRes, error) {
 
 	// authorize
 	claims, err := u.authorService.Authorize(accessToken, []string{constants.RolePlanner, constants.RoleContractor, constants.RoleSupplier}, nil)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	// validate req.Status
 	if !pie.Contains(constants.StatusList, req.Status) {
-		return errs.ErrInvalidRequestStatus
+		return nil, errs.ErrInvalidRequestStatus
 	}
 
 	// find request
 	request, err := u.requestRepo.FindById(requestId, nil)
 	if err != nil {
-		return errs.ErrRequestNotFound
+		return nil, errs.ErrRequestNotFound
 	}
 
 	// check permission
@@ -74,10 +85,10 @@ func (u UpdateRequestStatus) Handle(accessToken string, requestId uuid.UUID, req
 		action = constants.ActionCancel
 	case claims.Role == constants.RoleSupplier && req.Status == constants.StatusReady && request.Status == constants.StatusNew:
 		action = constants.ActionUpdate
-	case claims.Role == constants.RoleContractor && req.Status == constants.StatusCollected && request.Status != constants.StatusReady:
+	case claims.Role == constants.RoleContractor && req.Status == constants.StatusCollected && request.Status == constants.StatusReady:
 		action = constants.ActionUpdate
 	default:
-		return errs.ErrUnauthorized
+		return nil, errs.ErrUnauthorized
 	}
 
 	// update request
@@ -96,7 +107,22 @@ func (u UpdateRequestStatus) Handle(accessToken string, requestId uuid.UUID, req
 		_ = u.emailDriven.SendEmailOnRequestUpdate(mailList)
 	}()
 
-	// TODO sse
+	request, _ = u.requestRepo.FindById(request.Id, []string{"Contractor", "Contract", "Contract.Supplier", "Planner", "HistoryList", "HistoryList.Creator"})
+	requestRes, _ := maps.ToRequestResponse(request)
 
-	return nil
+	go func() {
+		notificationList, _ := u.notificationFac.CreateNotificationListForRequestAction(history.Id)
+		go func() {
+			_ = u.notificationRepo.InsertMany(notificationList)
+		}()
+		go func() {
+			notificationDtoList := make([]*sse.Message, len(notificationList))
+			for i, notification := range notificationList {
+				notificationDtoList[i], _ = sse.ToMessage(notification.ReceiverId, claims.UserEmail, notification, requestRes)
+			}
+			_ = u.sseDriven.SendMessage(notificationDtoList)
+		}()
+	}()
+
+	return requestRes, nil
 }

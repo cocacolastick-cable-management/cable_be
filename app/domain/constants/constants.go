@@ -26,8 +26,17 @@ const (
 	ActionCreate = "create"
 	ActionUpdate = "update"
 	ActionCancel = "cancel"
+
+	ActionDisable = "disable"
+	ActionEnable  = "enable"
 )
 
 var (
 	ActionList = []string{ActionCancel, ActionUpdate, ActionCreate}
+)
+
+const (
+	ObjTyRequest  = "request"
+	ObjTyUser     = "user"
+	ObjTyContract = "contract"
 )

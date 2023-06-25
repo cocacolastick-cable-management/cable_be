@@ -72,6 +72,14 @@ func HandleGlobalErrors(ctx *gin.Context) {
 		return
 	}
 
+	if errors.Is(err, errs.ErrNotificationNotFound) {
+		ctx.JSON(400, types.ResponseType{
+			Code:    "NNF",
+			Message: "notification is not found",
+		})
+		return
+	}
+
 	panic(err)
 }
 
@@ -102,6 +110,26 @@ func toValidationErrorRes(errs validator.ValidationErrors) types.ResponseType {
 	return types.ResponseType{
 		Code:    "IV",
 		Message: "invalid fields",
-		Errors:  errs,
+		Errors:  ValidationErrorToStruct(errs),
 	}
+}
+
+type ValidationErrorResponse struct {
+	FailedField string `json:"failedField"`
+	Tag         string `json:"tag"`
+	Value       string `json:"value"`
+}
+
+func ValidationErrorToStruct(err validator.ValidationErrors) []*ValidationErrorResponse {
+	var errRes []*ValidationErrorResponse
+	if err != nil {
+		for _, err := range err {
+			var element ValidationErrorResponse
+			element.FailedField = err.Field()
+			element.Tag = err.Tag()
+			element.Value = err.Param()
+			errRes = append(errRes, &element)
+		}
+	}
+	return errRes
 }

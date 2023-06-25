@@ -7,6 +7,7 @@ import (
 
 type ContractRes struct {
 	Id             uuid.UUID `json:"id"`
+	Counter        uint      `json:"counter"`
 	Name           string    `json:"name"`
 	SupplierId     uuid.UUID `json:"supplierId"`
 	SupplierEmail  string    `json:"supplierEmail"`

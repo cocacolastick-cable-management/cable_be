@@ -76,7 +76,7 @@ func BuildEnv() {
 
 	environments.JwtSecret = "123467890qwertuiopasdfghjkl"
 
-	environments.DbDsn = "host=localhost user=postgres password=postgrespw dbname=cable_db_2 port=32768 sslmode=disable TimeZone=Asia/Shanghai"
+	environments.DbDsn = "host=db user=postgres password=postgrespw dbname=cable_db port=5432 sslmode=disable TimeZone=Asia/Shanghai"
 
 	environments.SmtpEmail = "vuphamlethanh@gmail.com"
 	environments.SmtpHost = "smtp.gmail.com"
@@ -239,12 +239,14 @@ func BuildApi(engine *gin.Engine) {
 	supplierRouters = routers.NewSupplierRouters(supplierRequestContr, supplierContractContr)
 	contractorRouters = routers.NewContractorRouters(contractorRequestContr)
 
-	baseRouters.Register(engine)
-	commonRouters.Register(engine)
-	adminRouters.Register(engine)
-	plannerRouters.Register(engine)
-	supplierRouters.Register(engine)
-	contractorRouters.Register(engine)
+	apiRouters := engine.Group("/api")
+
+	baseRouters.Register(apiRouters)
+	commonRouters.Register(apiRouters)
+	adminRouters.Register(apiRouters)
+	plannerRouters.Register(apiRouters)
+	supplierRouters.Register(apiRouters)
+	contractorRouters.Register(apiRouters)
 
 	//engine.NoRoute(middlewares.HandleGlobalErrors)
 }
